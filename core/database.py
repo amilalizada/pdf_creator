@@ -18,9 +18,10 @@ class StrictMySQLDatabase(ReconnectMixin, MySQLDatabase, ABC):
         return super(StrictMySQLDatabase, self)._connect()
 
 db_connection = StrictMySQLDatabase(
-    database=str(settings.db_name),
-    user=str(settings.db_user),
-    password=str(settings.db_password),
+    database=settings.db_name,
+    user=settings.db_user,
+    password=settings.db_password,
+    port=3308,
     host="localhost",
 )
 

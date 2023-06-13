@@ -1,33 +1,40 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Add Input Field</title>
+    
+</head>
+
+<body>
+    <div>Select company for sending
+        <select id="companies">
+            <option value="text">Text</option>
+            <option value="number">Number</option>
+            <option value="email">Email</option>
+            <!-- Add more options as needed -->
+        </select>
+        <select name="" id="projects">
+
+        </select>
+    </div>
+
+    <button onclick="addInput()">Add</button>
+
+
     <script>
         function addInput() {
             var container = document.getElementById("container");
             var select = document.getElementById("inputType");
             var selectedOption = select.options[select.selectedIndex];
-            
+
             var input = document.createElement("input");
             input.type = selectedOption.value;
-            
+
             container.appendChild(document.createElement("br")); // Add line break
             container.appendChild(input);
         }
     </script>
-</head>
-<body>
-    <div id="container">
-        <input type="text">
-    </div>
-    
-    <select id="inputType">
-        <option value="text">Text</option>
-        <option value="number">Number</option>
-        <option value="email">Email</option>
-        <!-- Add more options as needed -->
-    </select>
-    
-    <button onclick="addInput()">Add</button>
 </body>
+
 </html>

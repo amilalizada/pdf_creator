@@ -31,9 +31,9 @@
       color: #333;
     }
 
-    input[type="text"],
-    input[type="email"],
-    input[type="password"] {
+    input[type="name"],
+    input[type="currency"],
+    input[type="location"] {
       width: 100%;
       padding: 10px;
       border-radius: 3px;
@@ -59,19 +59,20 @@
 
 <body>
   <div class="container">
-    <h2>Create User</h2>
+    <h2>Create company</h2>
 
     <form action="" method="">
-      <label for="fullname">Full Name:</label>
-      <input type="text" id="fullname" name="fullname" required>
+      <label for="name">Name of company:</label>
+      <input type="text" id="name" name="name" required>
 
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" required>
+      <label for="address">Adress:</label>
+      <input type="text" id="address" name="address" required>
 
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required>
+      <label for="location">Location:</label>
+      <input type="text" id="location" name="location" required>
+      
 
-      <button id="create" type="button">Create user</button>
+      <button id="create" type="button">Create Company</button>
     </form>
   </div>
 
@@ -79,24 +80,23 @@
     document.getElementById("create").addEventListener("click", function (event) {
       event.preventDefault()
 
-      var fullname = document.getElementById("fullname").value;
-      var email = document.getElementById("email").value;
-      var password = document.getElementById("password").value;
+      var name = document.getElementById("name").value;
+      var address = document.getElementById("address").value;
+      var location = document.getElementById("location").value;
 
-      var user = {
-        fullname: fullname,
-        email: email,
-        password: password
+      var company = {
+        name: name,
+        address: address,
+        location: location,
       };
-      console.log(user)
-
-      fetch("http://0.0.0.0:8081/api/pdf/create", {
+      console.log(company)
+      fetch("http://0.0.0.0:8081/api/pdf/create-company", {
           method: "POST",
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(user)
+          body: JSON.stringify(company)
         })
         .then(response => response.json())
         .then(data => {
@@ -106,11 +106,10 @@
           console.error("Error:", error);
         });
 
-        window.location.replace("http://0.0.0.0:8081/api/pdf");
+        window.location.replace("http://0.0.0.0:8081/api/pdf/create-project");
     });
 
   </script>
 
 </body>
-
 </html>

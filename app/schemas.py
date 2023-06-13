@@ -29,3 +29,22 @@ class LoginInputSchema(BaseModel):
     class Config:
         orm_mode = True
         getter_dict = PeeweeGetterDict 
+
+
+class CreateCompanyInputSchema(BaseModel):
+    name: str
+    address: str
+    location: str = ""
+
+    class Config:
+        orm_mode = True
+        getter_dict = PeeweeGetterDict 
+
+
+class CreateProjectInputSchema(BaseModel):
+    name: str
+    currency: str
+    comp_id: int
+    class Config:
+        orm_mode = True
+        getter_dict = PeeweeGetterDict 
