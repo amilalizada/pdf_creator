@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from pydantic.networks import EmailStr
 from pydantic.utils import GetterDict
 import peewee
-from typing import Any, Optional
+from typing import Any, List, Optional
 
 
 class PeeweeGetterDict(GetterDict):
@@ -35,6 +35,7 @@ class CreateCompanyInputSchema(BaseModel):
     name: str
     address: str
     location: str = ""
+    tax_id: int
 
     class Config:
         orm_mode = True
@@ -53,3 +54,7 @@ class CreateProjectInputSchema(BaseModel):
 class ConvertInvoiceInputSchema(BaseModel):
     comp_id: int
     proj_id: int
+    date: str
+    due_date: str
+    invoice_id: int
+    descriptions: List

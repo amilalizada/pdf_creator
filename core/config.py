@@ -11,7 +11,7 @@ class AppSettings(BaseSettings):
     db_name: str = "jl_pdf_db"
     db_password: str = "12345"
     db_user: str = "root"
-    db_port: str = "3308"
+    db_port: int = 3309
 
     class Config:
         env_file = ".env"

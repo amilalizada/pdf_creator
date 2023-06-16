@@ -1,5 +1,5 @@
 from abc import ABC
-
+import mysql.connector
 from fastapi import HTTPException
 from peewee import Model, MySQLDatabase, DoesNotExist
 from playhouse.shortcuts import ReconnectMixin
@@ -18,8 +18,8 @@ db_connection = StrictMySQLDatabase(
     database=settings.db_name,
     user=settings.db_user,
     password=settings.db_password,
-    port=3308,
-    host="localhost",
+    port=3309,
+    host="127.0.0.1",
 )
 
 class BaseModel(Model):

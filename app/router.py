@@ -1,6 +1,7 @@
 import hashlib
 import time
 import os
+import json
 from fastapi import Request
 from fastapi.param_functions import Depends, File
 from fastapi.routing import APIRouter
@@ -8,7 +9,7 @@ from starlette import status
 from fastapi.responses import JSONResponse, HTMLResponse, RedirectResponse, Response, FileResponse
 from fastapi.templating import Jinja2Templates
 from app.schemas import *
-from app.models import Project, User, Company
+from app.models import Project, User, Company, PdfData
 from jinja2 import Environment, FileSystemLoader
 from app.utils import convert_to_pdf
 
@@ -65,16 +66,17 @@ def create_user(data: CreateUserInput):
 
 @router.get("/invoice-create")
 def create_user_get(request: Request):
+
     return templates.TemplateResponse("invoice_create.html", {"request": request})
 
 
 @router.post("/create-company")
 def create_comp(data: CreateCompanyInputSchema):
-    print(data)
     Company.create(
         name=data.name.strip(),
         address=data.address.strip(),
         location=data.location.strip(),
+        tax_id=data.tax_id,
         created_at=int(time.time())
     )
 
@@ -110,9 +112,13 @@ def create_proj_get(request: Request):
 
 @router.get("/create-doc")
 def create_doc(request: Request):
-    companies = Company.select().dicts()
+    # companies = list(Company.select().dicts())
+    # projects = list(Project.select(Project.id, Project.name, Project.currency, Company.name.alias("company_name"))
+    # .join(Company, on=Company.id == Project.comp_id)
+    # .dicts())
+    # , "companies": companies}
 
-    return templates.TemplateResponse("invoice_create.html", {"request": request, "companies": list(companies)})
+    return templates.TemplateResponse("invoice_create.html", {"request": request})
 
 
 
@@ -125,37 +131,68 @@ def get_projects(comp_id: int, request: Request):
 
 @router.post("/convert-invoice")
 def convert_pdf(data: ConvertInvoiceInputSchema, request: Request):
-    print(data)
-    # company = list(Company.select().where(Company.id == data.comp_id).dicts())[0]
-    # project = list(Project.select().where(Project.id == data.proj_id).dicts())[0]
+    
+    # print(data)
+    company = list(Company.select().where(Company.id == data.comp_id).dicts())[0]
+    project = list(Project.select().where(Project.id == data.proj_id).dicts())[0]
 
-    # obj = {
-    #     "company_name": company["name"],
-    #     "company_address": company["address"],
-    #     "company_location": company["location"],
-    #     "project_name": project["name"],
-    #     "project_currency": project["currency"]
-    # }
     obj = {
-        "company_name": "Micro",
-        "company_address": "ASdsdasDsadas",
-        "company_location": "baku/Azerbaijan",
-        "project_name": "tableau",
-        "project_currency": "usd"
+        "company_name": company["name"],
+        "company_address": company["address"],
+        "company_location": company["location"],
+        "company_tax": company["tax_id"],
+        "project_name": project["name"],
+        "project_currency": project["currency"],
+        "desciptions": data.descriptions,
+        "invoice_id": data.invoice_id,
+        "date": data.date,
+        "due_date": data.due_date
     }
 
-    template = env.get_template("invoice.html")
-    path = f"{templates_dir}/invoice.html"
-    convert_to_pdf(templates_dir,"new.pdf", obj)
+    pdf_data = PdfData.create(
+        data=json.dumps(obj, separators=(',', ':')),
+        comp_id=data.comp_id,
+        proj_id=data.proj_id,
+        created_at=int(time.time())
+    )
+
+    return {"id": pdf_data.id}
 
 
-    # Render the template with the given data
-    # rendered_html = template.render(data)
+@router.get("/preview/{id}")
+def preview(id: int, request: Request):
+    pdf_data = list(PdfData.select().where(PdfData.id == id).dicts())[0]
+    company = list(Company.select().where(Company.id == pdf_data["comp_id"]).dicts())[0]
+    proje = list(Project.select().where(Project.id == pdf_data["proj_id"]).dicts())[0]
+    pdf_data = json.loads(pdf_data["data"])
 
-    # Generate a unique filename for the PDF file
-    # output_path = "/path/to/output.pdf"
+    pdf_data["currency"] = proje["currency"]
+    pdf_data["tax_id"] = company["tax_id"]
+    inv_id = pdf_data["invoice_id"]
+    # convert_to_pdf("./templates/invoice.html", f"output{inv_id}.pdf")
 
-    # Convert HTML to PDF using pdfkit
-    # pdfkit.from_string(rendered_html, output_path)
+    return templates.TemplateResponse("invoice.html", {"request": request, "data": pdf_data})
 
-    # return FileResponse(output_path, media_type="application/pdf", filename="output.pdf")
+
+@router.get("/admin")
+def admin(request: Request):
+    companies = list(Company.select().dicts())
+    projects = list(Project.select(Project.id, Project.name, Project.currency, Company.name.alias("company_name"))
+    .join(Company, on=Company.id == Project.comp_id)
+    .dicts())
+
+    return templates.TemplateResponse("admin.html", {"request": request, "companies": companies, "projects": projects})
+
+
+@router.get("/open")
+def open(request: Request):
+    # companies = Company.select().dicts()
+
+    return templates.TemplateResponse("invoice.html", {"request": request})
+
+
+@router.get("/list-comps")
+def open(request: Request):
+    companies = list(Company.select().dicts())
+
+    return companies

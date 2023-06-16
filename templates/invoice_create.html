@@ -1,45 +1,173 @@
 <!DOCTYPE html>
 <html>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
 <head>
-    <title>Add Input Field</title>
+    <title>Create Invoice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
 
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+            display: flex;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        input[type="submit"] {
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 300px;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        select {
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 300px;
+        }
+
+        .section {
+            margin-bottom: 10px;
+        }
+
+        .remove-button {
+            background-color: #ff0000;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
-    <div>Select company for sending
-        <select id="companies">
-            {% for comp in companies %}
-            <option onclick="getProjs()" id="" value="{{comp.id}}">{{comp.name}}</option>
-            {% endfor %}
-        </select>
-        <select name="" id="projects">
 
-        </select>
-    </div>
+    <form id="form">
+        <div class="first">
+            <label for="companySelect">Select Company:</label>
+            <select id="companySelect" name="companySelect">
+                <option value="0">Companies</option>
 
-    <button onclick="addInput()">Add</button>
+                {% for comp in companies %}
+                <option value="{{comp.id}}">{{comp.name}}</option>
+                {% endfor %}
+                <!-- Add more options dynamically based on available companies -->
+            </select>
+
+            <label for="projectSelect">Select Project:</label>
+            <select id="projectSelect" name="projectSelect">
+
+                <!-- Add more options dynamically based on available projects -->
+            </select>
+
+            <label for="startDate">Date:</label>
+            <input type="date" id="startDate" name="startDate">
+
+            <label for="endDate">Due Date:</label>
+            <input type="date" id="endDate" name="endDate">
+
+            <label for="invoiceId">Invoice ID:</label>
+            <input type="number" id="invoiceId" name="invoiceId" placeholder="Enter invoice ID">
+        </div>
 
 
-    <button onclick="createPdf()">Create PDF</button>
+        <div class="section container row">
+            <div class="desc col-3 mb-5 mr-5">
+                <label for="description">Description:</label>
+                <input type="text" id="description" name="description" placeholder="Enter description">
 
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" placeholder="Enter quantity">
+
+                <label for="unitPrice">Unit Price:</label>
+                <input type="number" id="unitPrice" name="unitPrice" placeholder="Enter unit price">
+            </div>
+            <!-- <label for="totalPrice">Total Price:</label>
+            <input type="number" id="totalPrice" name="totalPrice" placeholder="Enter total price"> -->
+        </div>
+
+
+    </form>
+    <!-- <button type="button" id="addSectionButton">Add Section</button> -->
+
+    <input onclick="createPdf()" id="create_doc" type="submit" value="Create Invoice">
 
     <script>
-        function addInput() {
-            var container = document.getElementById("container");
-            var select = document.getElementById("companies");
-            var selectedOption = select.options[select.selectedIndex];
-            var input = document.createElement("input");
-            input.value = selectedOption.value;
-            console.log(input);
+        var countOfDesc = prompt("Please enter count of descriptions first: ")
+        while (countOfDesc > 1) {
+            document.querySelector(".section").innerHTML += `<div class="desc col-3 mb-5 mr-5">
+            <label for="description">Description:</label>
+            <input type="text" id="description" name="description" placeholder="Enter description">
 
-            container.appendChild(document.createElement("br")); // Add line break
-            container.appendChild(input);
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" placeholder="Enter quantity">
+
+            <label for="unitPrice">Unit Price:</label>
+            <input type="number" id="unitPrice" name="unitPrice" placeholder="Enter unit price">`
+
+            countOfDesc -= 1
         }
+        // document.getElementById("addSectionButton").addEventListener("click", function (e) {
 
-        const companies = document.getElementById('companies');
-        const projects_select = document.getElementById('projects');
+        // })
+
+        // function addInput() {
+        //     var container = document.getElementById("container");
+        //     var select = document.getElementById("companies");
+        //     var selectedOption = select.options[select.selectedIndex];
+        //     var input = document.createElement("input");
+        //     input.value = selectedOption.value;
+        //     console.log(input);
+
+        //     container.appendChild(document.createElement("br")); // Add line break
+        //     container.appendChild(input);
+        // }
+
+        const companies = document.getElementById('companySelect');
+        const projects_select = document.getElementById('projectSelect');
+        fetch(`http://0.0.0.0:8081/api/pdf/list-comps`, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then((response) => response.json())
+            .then((responseJson) => {
+                console.log(responseJson);
+                responseJson.forEach(element => {
+                    companies.innerHTML +=
+                        `<option class="comp-obj" value="${element.id}">${element.name}</option>`
+
+                });
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+
         companies.addEventListener("change", e => {
+            console.log((projects_select));
+
             projects_select.innerHTML = ''
             projects_select.innerHTML = '<option class="project" value="">Projects</option>'
             let option = e.target;
@@ -56,7 +184,7 @@
                     console.log(responseJson);
                     responseJson.forEach(element => {
                         projects_select.innerHTML +=
-                            `<option class="models" value="${element.id}">${element.name}</option>`
+                            `<option class="project-opt" value="${element.id}">${element.name}</option>`
 
                     });
                 })
@@ -66,14 +194,38 @@
         });
 
         function createPdf() {
-            const companies = document.getElementById('companies');
-            const projects_select = document.getElementById('projects');
-            let comp_option = companies.options[companies.selectedIndex].value;
-            let proj_option = projects_select.options[projects_select.selectedIndex].value;;
+            const companies = document.getElementById('companySelect');
+            const projects_select = document.getElementById('projectSelect');
+            var date = document.getElementById("startDate").value
+            var dueDate = document.getElementById("endDate").value
+            var invoice = document.getElementById("invoiceId").value
+            var comp_option = companies.options[companies.selectedIndex].value;
+            var proj_option = projects_select.options[projects_select.selectedIndex].value;
+            var descs = document.querySelectorAll(".desc")
+            var inpArr = []
+            descs.forEach((div) => {
+                var descInp = div.querySelector("#description").value
+                var qty = div.querySelector("#quantity").value
+                var unitPrice = div.querySelector("#unitPrice").value
+                inpArr.push(
+                    {
+                        "description": descInp,
+                        "qty": qty,
+                        "unitprice": unitPrice,
+                        "total_price": qty * unitPrice
+                    }
+                )
+            })
+
+            console.log(inpArr);
 
             var body = {
                 comp_id: comp_option,
                 proj_id: proj_option,
+                date: date,
+                due_date: dueDate,
+                invoice_id: invoice,
+                descriptions: inpArr
             };
 
             fetch("http://0.0.0.0:8081/api/pdf/convert-invoice", {
@@ -87,6 +239,7 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log("User created successfully:", data);
+                    window.location.replace(`http://0.0.0.0:8081/api/pdf/preview/${data["id"]}`);
                 })
                 .catch(error => {
                     console.error("Error:", error);

@@ -22,7 +22,7 @@ class User(BaseModel):
     created_at = BigIntegerField()
 
     class Meta:
-        table_name = "user"
+        table_name = "users"
 
 
 class Company(BaseModel):
@@ -30,6 +30,7 @@ class Company(BaseModel):
     name = CharField()
     address = CharField()
     location = CharField()
+    tax_id = BigIntegerField()
     created_at = BigIntegerField()
 
     class Meta:
@@ -45,3 +46,14 @@ class Project(BaseModel):
 
     class Meta:
         table_name = "projects"
+
+
+class PdfData(BaseModel):
+    id = AutoField()
+    data = TextField()
+    comp_id = ForeignKeyField(column_name='comp_id', field='id', model=Company, null=True)
+    proj_id = ForeignKeyField(column_name='proj_id', field='id', model=Project, null=True)
+    created_at = BigIntegerField()
+
+    class Meta:
+        table_name = "pdf_data"

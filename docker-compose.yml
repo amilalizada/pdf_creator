@@ -10,7 +10,7 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     ports: 
-      - 3308:3306
+      - 3309:3306
     environment:
       MYSQL_DATABASE: 'jl_pdf_db'
       MYSQL_ROOT_PASSWORD: '12345'

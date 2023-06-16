@@ -5,7 +5,6 @@ from core.database import db, db_connection
 from core.middlewares import CatchExceptionsMiddleware
 
 
-
 def register_extensions(app: object):
     """Register third part extensions."""
     db.initialize(db_connection)
@@ -51,6 +50,8 @@ def create_app() -> FastAPI:
         # on_startup=[on_startup],
         # on_shutdown=[on_shutdown],
     )
+
+
     register_extensions(app)
     register_routers(app)
     register_middleware(app)

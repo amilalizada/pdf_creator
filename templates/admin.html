@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="button"] {
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 300px;
+        }
+
+        input[type="button"] {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        input[type="email"] {
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 300px;
+        }
+        input[type="password"] {
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 300px;
+        }
+        .table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .table th,
+        .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table th {
+            background-color: #f2f2f2;
+        }
+
+        .table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        select {
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 300px;
+        }
+        #create_user{
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 300px;
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Admin Panel</h1>
+<div style="display: flex;" class="creation">
+    <h2>Create Company</h2>
+    <form>
+        <label for="companyName">Company Name:</label>
+        <input type="text" id="companyName" name="companyName" placeholder="Enter company name">
+
+        <label for="companyDescription">Company Address:</label>
+        <input type="text" id="companyAddress" name="companyDescription" placeholder="Enter company address">
+
+        <label for="companyDescription">Company Location:</label>
+        <input type="text" id="companyLocation" name="companyDescription" placeholder="Enter company location">
+
+        <label for="companyDescription">Company TaxID:</label>
+        <input type="text" id="companyTax" name="companyDescription" placeholder="Enter company tax_id">
+
+        <input id="create_company" type="button" value="Create Company">
+    </form>
+
+    <h2>Create Project</h2>
+    <form>
+        <label for="companySelect">Select Company:</label>
+        <select id="companySelect" name="companySelect">
+            {% for comp in companies %}
+            <option value="{{comp.id}}">{{comp.name}}</option>
+            {% endfor %}
+            <!-- Add more options dynamically based on available companies -->
+        </select>
+
+        <label for="projectName">Project Name:</label>
+        <input type="text" id="projectName" name="projectName" placeholder="Enter project name">
+
+        <label for="projectDescription">Project currency:</label>
+        <input type="text" id="projectCurr" name="projectDescription" placeholder="Enter project description">
+
+        <input id="create_project" type="button" value="Create Project">
+    </form>
+    <h2>Create User</h2>
+    
+    <form action="" method="">
+      <label for="fullname">Full Name:</label>
+      <input type="text" id="fullname" name="fullname" required>
+    
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+    
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+    
+      <button id="create_user" type="button">Create user</button>
+    </form>
+</div>
+<div class="container">
+  </div>
+    <!-- <h2>Create Company</h2>
+    <form>
+        <label for="companyName">Company Name:</label>
+        <input type="text" id="companyName" name="companyName" placeholder="Enter company name">
+
+        <label for="companyDescription">Company Address:</label>
+        <input type="text" id="companyAddress" name="companyDescription" placeholder="Enter company address">
+
+        <label for="companyDescription">Company Location:</label>
+        <input type="text" id="companyLocation" name="companyDescription" placeholder="Enter company location">
+
+        <label for="companyDescription">Company TaxID:</label>
+        <input type="text" id="companyTax" name="companyDescription" placeholder="Enter company tax_id">
+
+        <input id="create_company" type="button" value="Create Company">
+    </form>
+
+    <h2>Create Project</h2>
+    <form>
+        <label for="companySelect">Select Company:</label>
+        <select id="companySelect" name="companySelect">
+            {% for comp in companies %}
+            <option value="{{comp.id}}">{{comp.name}}</option>
+            {% endfor %}
+            <!-- Add more options dynamically based on available companies -->
+        <!-- </select>
+
+        <label for="projectName">Project Name:</label>
+        <input type="text" id="projectName" name="projectName" placeholder="Enter project name"> -->
+
+        <!-- <label for="projectDescription">Project currency:</label>
+        <input type="text" id="projectCurr" name="projectDescription" placeholder="Enter project description">
+
+        <input id="create_project" type="button" value="Create Project"> -->
+    <!-- </form> --> 
+
+    <h2>Companies</h2>
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Addres</th>
+        </tr>
+        <!-- Example row, replace with dynamic data from backend -->
+        {% for comp in companies %}
+        <tr>
+            <td>{{comp.id}}</td>
+            <td>{{comp.name}}</td>
+            <td>{{comp.address}}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+    <h2>Projects</h2>
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Company Name</th>
+            <th>currency</th>
+        </tr>
+        <!-- Example row, replace with dynamic data from backend -->
+        {% for proj in projects %}
+
+        <tr>
+            <td>{{proj.id}}</td>
+            <td>{{proj.name}}</td>
+            <td>{{proj.company_name}}</td>
+            <td>{{proj.currency}}</td>
+
+        </tr>
+        {% endfor %}
+
+    </table>
+
+    <script>
+        document.getElementById("create_company").addEventListener("click", function (event) {
+            event.preventDefault()
+
+            var name = document.getElementById("companyName").value;
+            var address = document.getElementById("companyAddress").value;
+            var location = document.getElementById("companyLocation").value;
+            var tax_id = document.getElementById("companyTax").value;
+            var company = {
+                name: name,
+                address: address,
+                location: location,
+                tax_id: tax_id
+            };
+            fetch("http://0.0.0.0:8081/api/pdf/create-company", {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(company)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("User created successfully:", data);
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+
+            // window.location.replace("http://0.0.0.0:8081/api/pdf/create-project");
+        });
+
+        document.getElementById("create_project").addEventListener("click", function (event) {
+            event.preventDefault()
+
+            var name = document.getElementById("projectName").value;
+            var currency = document.getElementById("projectCurr").value;
+            var comps = document.getElementById("companySelect")
+            var comp_id = comps.options[comps.selectedIndex].value;
+
+            var proj = {
+                name: name,
+                currency: currency,
+                comp_id: comp_id
+            };
+            console.log(proj)
+
+            fetch("http://0.0.0.0:8081/api/pdf/create-project", {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(proj)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("User created successfully:", data);
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+        })
+
+    document.getElementById("create_user").addEventListener("click", function (event) {
+      event.preventDefault()
+
+      var fullname = document.getElementById("fullname").value;
+      var email = document.getElementById("email").value;
+      var password = document.getElementById("password").value;
+
+      var user = {
+        fullname: fullname,
+        email: email,
+        password: password
+      };
+      console.log(user)
+
+      fetch("http://0.0.0.0:8081/api/pdf/create", {
+          method: "POST",
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(user)
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log("User created successfully:", data);
+        })
+        .catch(error => {
+          console.error("Error:", error);
+        });
+
+    });
+    </script>
+</body>
+
+</html>
