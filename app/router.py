@@ -1,18 +1,24 @@
+import hashlib
+import time
+import os
 from fastapi import Request
 from fastapi.param_functions import Depends, File
 from fastapi.routing import APIRouter
-from pydantic.types import Json
 from starlette import status
-from fastapi.responses import JSONResponse, HTMLResponse, RedirectResponse, Response
+from fastapi.responses import JSONResponse, HTMLResponse, RedirectResponse, Response, FileResponse
 from fastapi.templating import Jinja2Templates
 from app.schemas import *
 from app.models import Project, User, Company
-import hashlib
-import time
+from jinja2 import Environment, FileSystemLoader
+from app.utils import convert_to_pdf
+
 
 router = APIRouter(prefix="", tags=["pdf"])
 
 templates = Jinja2Templates(directory="templates")
+templates_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+print(templates_dir)
+env = Environment(loader=FileSystemLoader(templates_dir))
 
 
 @router.get("/", response_class=HTMLResponse)
@@ -95,13 +101,61 @@ def create_proj(data: CreateProjectInputSchema):
 
 @router.get("/create-project")
 def create_proj_get(request: Request):
+    # companies = Company.select().dicts()
+
+    # return templates.TemplateResponse("create_project.html", {"request": request, "companies": list(companies)})
+    return templates.TemplateResponse("create_project.html", {"request": request})
+
+
+
+@router.get("/create-doc")
+def create_doc(request: Request):
     companies = Company.select().dicts()
 
-    return templates.TemplateResponse("create_project.html", {"request": request, "companies": list(companies)})
+    return templates.TemplateResponse("invoice_create.html", {"request": request, "companies": list(companies)})
 
 
-# @router.get("/create-doc")
-# def create_doc(request: Request):
-#     companies = Company.select().dicts()
 
-#     return templates.TemplateResponse("create_project.html", {"request": request, "companies": list(companies)})
+@router.get("/projects/{comp_id}")
+def get_projects(comp_id: int, request: Request):
+    projects = Project.select().where(Project.comp_id == comp_id).dicts()
+
+    return list(projects)
+
+
+@router.post("/convert-invoice")
+def convert_pdf(data: ConvertInvoiceInputSchema, request: Request):
+    print(data)
+    # company = list(Company.select().where(Company.id == data.comp_id).dicts())[0]
+    # project = list(Project.select().where(Project.id == data.proj_id).dicts())[0]
+
+    # obj = {
+    #     "company_name": company["name"],
+    #     "company_address": company["address"],
+    #     "company_location": company["location"],
+    #     "project_name": project["name"],
+    #     "project_currency": project["currency"]
+    # }
+    obj = {
+        "company_name": "Micro",
+        "company_address": "ASdsdasDsadas",
+        "company_location": "baku/Azerbaijan",
+        "project_name": "tableau",
+        "project_currency": "usd"
+    }
+
+    template = env.get_template("invoice.html")
+    path = f"{templates_dir}/invoice.html"
+    convert_to_pdf(templates_dir,"new.pdf", obj)
+
+
+    # Render the template with the given data
+    # rendered_html = template.render(data)
+
+    # Generate a unique filename for the PDF file
+    # output_path = "/path/to/output.pdf"
+
+    # Convert HTML to PDF using pdfkit
+    # pdfkit.from_string(rendered_html, output_path)
+
+    # return FileResponse(output_path, media_type="application/pdf", filename="output.pdf")

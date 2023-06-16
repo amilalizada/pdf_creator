@@ -3,16 +3,15 @@
 
 <head>
     <title>Add Input Field</title>
-    
+
 </head>
 
 <body>
     <div>Select company for sending
         <select id="companies">
-            <option value="text">Text</option>
-            <option value="number">Number</option>
-            <option value="email">Email</option>
-            <!-- Add more options as needed -->
+            {% for comp in companies %}
+            <option onclick="getProjs()" id="" value="{{comp.id}}">{{comp.name}}</option>
+            {% endfor %}
         </select>
         <select name="" id="projects">
 
@@ -22,17 +21,76 @@
     <button onclick="addInput()">Add</button>
 
 
+    <button onclick="createPdf()">Create PDF</button>
+
+
     <script>
         function addInput() {
             var container = document.getElementById("container");
-            var select = document.getElementById("inputType");
+            var select = document.getElementById("companies");
             var selectedOption = select.options[select.selectedIndex];
-
             var input = document.createElement("input");
-            input.type = selectedOption.value;
+            input.value = selectedOption.value;
+            console.log(input);
 
             container.appendChild(document.createElement("br")); // Add line break
             container.appendChild(input);
+        }
+
+        const companies = document.getElementById('companies');
+        const projects_select = document.getElementById('projects');
+        companies.addEventListener("change", e => {
+            projects_select.innerHTML = ''
+            projects_select.innerHTML = '<option class="project" value="">Projects</option>'
+            let option = e.target;
+            comp_id = option.value
+            fetch(`http://0.0.0.0:8081/api/pdf/projects/${comp_id}`, {
+                    method: 'GET',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    console.log(responseJson);
+                    responseJson.forEach(element => {
+                        projects_select.innerHTML +=
+                            `<option class="models" value="${element.id}">${element.name}</option>`
+
+                    });
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        });
+
+        function createPdf() {
+            const companies = document.getElementById('companies');
+            const projects_select = document.getElementById('projects');
+            let comp_option = companies.options[companies.selectedIndex].value;
+            let proj_option = projects_select.options[projects_select.selectedIndex].value;;
+
+            var body = {
+                comp_id: comp_option,
+                proj_id: proj_option,
+            };
+
+            fetch("http://0.0.0.0:8081/api/pdf/convert-invoice", {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("User created successfully:", data);
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
         }
     </script>
 </body>

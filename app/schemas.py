@@ -48,3 +48,8 @@ class CreateProjectInputSchema(BaseModel):
     class Config:
         orm_mode = True
         getter_dict = PeeweeGetterDict 
+
+
+class ConvertInvoiceInputSchema(BaseModel):
+    comp_id: int
+    proj_id: int

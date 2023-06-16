@@ -11,9 +11,6 @@ from core.config import settings
 
 class StrictMySQLDatabase(ReconnectMixin, MySQLDatabase, ABC):
     def _connect(self, **kwargs):
-        # cursor = self.cursor()
-        # cursor.execute("SET SESSION sql_mode='NO_BACKSLASH_ESCAPES,NO_ENGINE_SUBSTITUTION';")
-        # cursor.execute("SET NAMES utf8mb4;")
 
         return super(StrictMySQLDatabase, self)._connect()
 
@@ -24,7 +21,6 @@ db_connection = StrictMySQLDatabase(
     port=3308,
     host="localhost",
 )
-
 
 class BaseModel(Model):
     class Meta:
