@@ -169,7 +169,16 @@ def preview(id: int, request: Request):
     pdf_data["currency"] = proje["currency"]
     pdf_data["tax_id"] = company["tax_id"]
     inv_id = pdf_data["invoice_id"]
-    # convert_to_pdf("./templates/invoice.html", f"output{inv_id}.pdf")
+    options = {
+    'page-size': 'Letter',
+    'margin-top': '0.75in',
+    'margin-right': '0.75in',
+    'margin-bottom': '0.75in',
+    'margin-left': '0.75in',
+    'encoding': "UTF-8",
+    'no-outline': None
+}
+    convert_to_pdf("./templates/invoice.html", f"output{inv_id}.pdf", options=options)
 
     return templates.TemplateResponse("invoice.html", {"request": request, "data": pdf_data})
 

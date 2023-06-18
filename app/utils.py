@@ -440,8 +440,8 @@ import pdfkit
     
 #     pdfkit.from_file(html_file, pdf_name)
 
-def convert_to_pdf(html_file, output_name):
-    pdfkit.from_file(html_file, output_name)
+def convert_to_pdf(html_file, output_name, options):
+    pdfkit.from_file(html_file, output_name, options=options)
 
 
 
