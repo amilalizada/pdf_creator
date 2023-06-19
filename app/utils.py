@@ -1,447 +1,387 @@
-import pdfkit  
+import pdfkit
+from ssl import create_default_context
+from email.mime.text import MIMEText
+from smtplib import SMTP
 
-# def convert_to_pdf(html_file, pdf_name, object):
+async def convert_to_pdf(html_file, output_name, options, data=None):
+    html = f"""
+        <!DOCTYPE html>
+<html>
 
-#     html_template ="""
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<style>
+
+  tbody{
+    "padding-left: 35px;"
+  }
+
+  td,
+  th {
+    'text-align: left;'
+    'padding: 6px;'
+    'text-align: right;'
     
-#     <!DOCTYPE html>
-#         <html>
-
-#         <head>
-#         <meta charset="UTF-8" />
-#         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-#         </head>
-#         <style>
-#         .container {
-#             padding: 80px;
-#             width: 50%;
-#             margin: auto;
-#             font-family: sans-serif;
-#         }
-
-#         .horizontal-line {
-#             height: 8px;
-#             width: 100%;
-
-#             --tw-bg-opacity: 1;
-#             background-color: rgb(30 58 138 / var(--tw-bg-opacity));
-
-#         }
-
-#         ul {
-#             list-style: none;
-#         }
-
-#         .invoice-section {
-#             padding-left: 3.5rem;
-#             padding-top: 1rem;
-#             padding-bottom: 1rem;
-#             padding-right: 0.5rem
-#         }
-
-#         .company-name {
-#             font-size: 1.5rem
-#             /* 24px */
-#             ;
-#             line-height: 2rem
-#             /* 32px */
-#             ;
-#             --tw-text-opacity: 1;
-#             color: rgb(167 139 250 / var(--tw-text-opacity));
-#         }
-
-#         .company-info {
-#             display: flex;
-#             align-items: center;
-#             justify-content: space-between;
-#             font-size: 0.75rem
-#             /* 12px */
-#             ;
-#             line-height: 1rem
-#             /* 16px */
-#             ;
-#         }
-
-#         .addres-info {
-#             --tw-text-opacity: 1;
-#             color: rgb(107 114 128 / var(--tw-text-opacity));
-#             display: grid;
-#             gap: 0.125rem
-#         }
-
-#         .bank-info {
-#             --tw-text-opacity: 1;
-#             color: rgb(156 163 175 / var(--tw-text-opacity));
-#             display: grid;
-#             gap: 0.125rem
-#         }
-
-#         .invoice-title {
-#             --tw-text-opacity: 1;
-#             color: rgb(30 58 138 / var(--tw-text-opacity));
-#             font-size: 2.25rem
-#             /* 36px */
-#             ;
-#             line-height: 2.5rem;
-#             font-weight: 700
-#         }
-
-#         .invoice-date {
-#             --tw-text-opacity: 1;
-#             color: rgb(236 72 153 / var(--tw-text-opacity));
-#             font-size: 0.875rem
-#             /* 14px */
-#             ;
-#             line-height: 1.25rem;
-#             font-weight: 700;
-
-#         }
-
-#         .invoice-details {
-#             font-size: 0.75rem
-#             /* 12px */
-#             ;
-#             line-height: 1rem
-#             /* 16px */
-#             ;
-#             display: grid;
-#             grid-template-columns: repeat(3, minmax(0, 1fr));
-#             gap: 0.75rem
-#             /* 12px */
-#             ;
-#             /* place-items: center; */
-#             align-items: flex-start;
-#             width: 80%;
-#             margin-top: 1.25rem --tw-text-opacity: 1;
-#             color: rgb(107 114 128 / var(--tw-text-opacity));
-#         }
-
-#         .invoice-label {
-#             font-size: 0.875rem
-#             /* 14px */
-#             ;
-#             line-height: 1.25rem
-#             /* 20px */
-#             ;
-#             font-weight: 700;
-
-#         }
-
-#         .invoice-address {
-#             --tw-text-opacity: 1;
-#             color: rgb(107 114 128 / var(--tw-text-opacity));
-#             display: grid;
-#             gap: 4px;
-#             padding-left: 0;
-#         }
-
-#         .invoice-recipient {
-#             --tw-text-opacity: 1;
-#             color: rgb(107 114 128 / var(--tw-text-opacity));
-
-#         }
-
-#         .invoice-number {
-#             --tw-text-opacity: 1;
-#             color: rgb(107 114 128 / var(--tw-text-opacity));
-#         }
-
-#         /* --tw-text-opacity: 1;
-#         color: rgb(107 114 128 / var(--tw-text-opacity)); */
-#         .invoice-project {
-#             grid-column-start: 2
-#         }
-
-
-
-#         .invoice-project-name {
-#             --tw-text-opacity: 1;
-#             color: rgb(107 114 128 / var(--tw-text-opacity));
-#         }
-
-#         .invoice-due-date {
-#             --tw-text-opacity: 1;
-#             color: rgb(107 114 128 / var(--tw-text-opacity));
-#         }
-
-
-
-
-#         .invoice-items {
-#             display: grid;
-#             grid-template-columns: repeat(5, minmax(0, 1fr));
-
-#         }
-
-#         .item-description {
-#             grid-column: span 2 / span 2;
-
-#         }
-
-#         .item-title {
-#             font-size: 0.875rem
-#             /* 14px */
-#             ;
-#             line-height: 1.25rem
-#             /* 20px */
-#             ;
-#             --tw-text-opacity: 1;
-#             color: rgb(30 58 138 / var(--tw-text-opacity));
-#             font-weight: 700;
-#             margin-bottom: 0.5rem
-#             /* 8px */
-#             ;
-
-#         }
-
-#         .text-right {
-#             text-align: right;
-#             font-size: 0.875rem
-#             /* 14px */
-#             ;
-#             line-height: 1.25rem
-#             /* 20px */
-#             ;
-#             font-weight: 700;
-#             --tw-text-opacity: 1;
-#             color: rgb(30 58 138 / var(--tw-text-opacity));
-#             margin-bottom: 0.5rem
-#             /* 8px */
-#             ;
-
-
-#         }
-
-#         .item-list {
-#             font-weight: 600;
-#             font-size: 0.75rem
-#             /* 12px */
-#             ;
-#             line-height: 1rem
-#             /* 16px */
-#             ;
-#             display: grid;
-#             gap: 0.5rem
-#             /* 8px */
-#             ;
-#             padding-left: 0;
-
-#         }
-
-#         .text-right>.item-list {
-#             color: rgb(107 114 128 / var(--tw-text-opacity));
-
-#         }
-
-
-
-
-#         .invoice-divider {
-#             margin-top: 1.5rem
-#             /* 24px */
-#             ;
-#             margin-bottom: 1.5rem
-#             /* 24px */
-#             ;
-#         }
-
-#         .invoice-footer {
-#             display: flex;
-#             align-items: start;
-#             justify-content: space-between;
-
-#         }
-
-#         .notes-label {
-#             font-size: 0.75rem
-#             /* 12px */
-#             ;
-#             line-height: 1rem
-#             /* 16px */
-#             ;
-#             --tw-text-opacity: 1;
-#             color: rgb(156 163 175 / var(--tw-text-opacity));
-#         }
-
-#         .invoice-summary {
-#             display: grid;
-#             grid-template-columns: repeat(2, minmax(0, 1fr));
-#             text-align: right;
-#             column-gap: 2.5rem
-#             /* 40px */
-#             ;
-#             font-size: 0.75rem
-#             /* 12px */
-#             ;
-#             line-height: 1rem
-#             /* 16px */
-#             ;
-#             gap: 0.5rem
-#             /* 8px */
-#             ;
-#             place-content: start;
-#             place-items: start;
-#             content: start;
-#             /* place-items: start; */
-
-#         }
-
-
-#         .summary-label {
-#             --tw-text-opacity: 1;
-#             color: rgb(30 58 138 / var(--tw-text-opacity));
-#             font-weight: 600;
-#             margin: 0;
-#             padding: 0;
-
-#         }
-
-#         .summary-value {
-#             font-weight: 700;
-
-#         }
-
-#         .total-amount {
-#             grid-column: span 2 / span 2;
-#             font-size: 1.875rem
-#             /* 30px */
-#             ;
-#             line-height: 2.25rem
-#             /* 36px */
-#             ;
-
-#             --tw-text-opacity: 1;
-#             color: rgb(236 72 153 / var(--tw-text-opacity));
-#             font-weight: 600;
-
-#         }
-#         </style>
-#         <body>
-#         <div class="container">
-#             <div class="horizontal-line"></div>
-
-#             <section class="invoice-section">
-#             <header>
-#                 <h1 style="color: red;" class="company-name">JLTECH LLC</h1>
-
-#                 <div class="company-info">
-#                 <ul class="address-info" style="padding: 0;">
-#                     <li>AGA Business Center 12th floor</li>
-#                     <li>Khojali Ave 55, Baku, Azerbaijan AZ 1001</li>
-#                     <li>(051) 450-00-15</li>
-#                 </ul>
-
-#                 <ul class="bank-info">
-#                     <li>Bank: «PAŞA Bank» ASC</li>
-#                     <li>S.W.I.F.T BIC: PAHAAZ22</li>
-#                     <li>Bank Code: 505141</li>
-#                     <li>TAX ID: 1700767721</li>
-#                     <li>Acc: AZ82NABZ01350100000000071944</li>
-#                 </ul>
-#                 </div>
-#             </header>
-
-#             <main>
-#                 <h1 class="invoice-title">Invoice</h1>
-#                 <span class="invoice-date">11/06/2023</span>
-
-#                 <article class="invoice-details">
-#                 <div>
-#                     <h1 class="invoice-label">Invoice for</h1>
-#                     <ul class="invoice-address">
-#                     <li>MICROTECH MMC</li>
-#                     <li>Khagani Rustamov 6</li>
-#                     <li>Baku, Azerbaijan</li>
-#                     </ul>
-#                 </div>
-
-#                 <div>
-#                     <h4 class="invoice-label">Payable to</h4>
-#                     <span class="invoice-recipient">JLTECH LLC</span>
-#                 </div>
-
-#                 <div>
-#                     <h4 class="invoice-label">Invoice #</h4>
-#                     <span class="invoice-number">31</span>
-#                 </div>
-
-#                 <div class="invoice-project">
-#                     <h4 class="invoice-label">Project</h4>
-#                     <span class="invoice-project-name">Service</span>
-#                 </div>
-
-#                 <div>
-#                     <h4 class="invoice-label">Due date</h4>
-#                     <span class="invoice-due-date">11/06/2023</span>
-#                 </div>
-#                 </article>
-
-#                 <hr class="invoice-divider" />
-
-#                 <div class="invoice-items">
-#                 <div class="item-description">
-#                     <h1 class="item-title">Description</h1>
-#                     <ul class="item-list">
-#                     <li>Tableau - Creator License (1 illik)</li>
-#                     <li>Tableau - Explorer License (1 illik)</li>
-#                     </ul>
-#                 </div>
-
-#                 <div class="text-right">
-#                     <h1 class="item-title">Qty</h1>
-#                     <ul class="item-list">
-#                     <li>3</li>
-#                     <li>15</li>
-#                     </ul>
-#                 </div>
-
-#                 <div class="text-right">
-#                     <h1 class="item-title">Unit price</h1>
-#                     <ul class="item-list">
-#                     <li>₼1,586.66</li>
-#                     <li>₼793.32</li>
-#                     </ul>
-#                 </div>
-
-#                 <div class="text-right">
-#                     <h1 class="item-title">Total price</h1>
-#                     <ul class="item-list">
-#                     <li>₼40,000.34</li>
-#                     <li>₼40,000.34</li>
-#                     <li>$0.00</li>
-#                     <li>$0.00</li>
-#                     </ul>
-#                 </div>
-#                 </div>
-#             </main>
-
-#             <hr class="invoice-divider" />
-
-#             <footer class="invoice-footer">
-#                 <span class="notes-label">Notes:</span>
-
-#                 <div class="invoice-summary">
-#                 <p class="summary-label">Subtotal</p>
-#                 <span class="summary-value">₼40,000.87</span>
-
-#                 <p class="summary-label">VAT</p>
-#                 <span class="summary-value">₼2,998.44</span>
-
-#                 <p class="summary-label total-amount">₼19,658.58</p>
-#                 </div>
-#             </footer>
-#             </section>
-#         </div>
-
-#         </body>
-
-#         </html>
-#     """
+  }
+
+  tr:nth-child(even) {
+    "background-color: #dddddd;"
+  }
+</style>
+
+<body>
+  <div style="width: 80%; margin: auto;" class="container">
+    <div style="height: 8px;
+    background-color: #283592" class="horizontal-line"></div>
+
+    <section class="invoice-section">
+      <header style="padding: 0;">
+        <!-- <h1 style="margin-left: 10px;
+        width: 300px;
+        color: #6d64e8; font-family: sans-serif; margin-top: 40px;" class="company-name">JLTECH LLC</h1> -->
+
+        <div style="padding: 0;" class="company-info d-flex justify-content-between mt-5">
+          <ul style="list-style: none;" class="address-info">
+            <li style="margin-left: 10px;
+            width: 300px;
+            color: #6d64e8; font-family: sans-serif; height: 40px; font-size: 30px;" class="company-name p-0 m-0">JLTECH LLC</li>
+            <li>AGA Business Center 12th floor</li>
+            <li>Khojali Ave 55, Baku, Azerbaijan AZ 1001</li>
+            <li>(051) 450-00-15</li>
+          </ul>
+
+          <ul style="list-style: none;" class="bank-info flex-end">
+            <li style="color: #6d64e8;">Tax ID: 2004130131</li>
+            <li style="color: #6d64e8;">IBAN: AZ76PAHA40060AZNHC0100164830</li>
+            <li>Bank: «PAŞA Bank» ASC</li>
+            <li>S.W.I.F.T BIC: PAHAAZ22</li>
+            <li>Bank Code: 505141</li>
+            <li>TAX ID: 1700767721</li>
+            <li>Acc: AZ82NABZ01350100000000071944</li>
+          </ul>
+        </div>
+      </header>
+
+      <main style="padding-left: 35px;">
+        <h1 style="color: #283592;" class="invoice-title">Invoice</h1>
+        <span style="color: #e01b84;" class="invoice-date">{{data.date}}</span>
+
+        <section class="invoice-details row">
+          <div class="d-flex flex-column col-4">
+            <h1 class="invoice-label">Invoice for</h1>
+            <ul style="list-style: none;" class="invoice-address p-0">
+              <li>{{data.company_name}}</li>
+              <li>{{data.company_tax}}</li>
+              <li>{{data.company_address}}</li>
+              <li>{{data.company_locatioan}}</li>
+            </ul>
+          </div>
+
+          <div class="d-flex flex-column col-4">
+            <div class="mb-5">
+              <h4 class="invoice-label">Payable to</h4>
+              <span class="invoice-recipient">JLTECH LLC</span>
+            </div>
+            <div class="invoice-project">
+              <h4 class="invoice-label">Project</h4>
+              <span class="invoice-project-name">{{data.project_name}}</span>
+            </div>
+
+          </div>
+
+          <div class="d-flex flex-column col-4">
+
+            <div class="">
+              <h4 class="invoice-label">Invoice #</h4>
+              <span class="invoice-number">{{data.invoice_id}}</span>
+            </div>
+
+            <div>
+              <h4 class="invoice-label mt-5">Due date</h4>
+              <span class="invoice-due-date">{{data.due_date}}</span>
+            </div>
+          </div>
+          <div class="col-3"></div>
+
+        </section>
+
+        <hr class="invoice-divider" />
+
+      </main>
+      <table style="border: none; font-family: arial, sans-serif;
+    width: 98%;
+    border: none;
+    margin-left: 27px;">
+        <tr style="padding-left: 35px;">
+          <th style="text-align: left; text-align: left;
+    padding: 6px;
+    text-align: right;">Description</th>
+          <th style="text-align: left;
+    padding: 6px;
+    text-align: right;color: #283592;">Qty</th>
+          <th style="text-align: left;background-color: #283592;
+    padding: 6px;
+    text-align: right;">Unit price</th>
+          <th style="text-align: left; color: #283592;
+    padding: 6px;
+    text-align: right;">Total price</th>
+
+        </tr>
+        <tr>
+          <td style="text-align: left;" class="desc">Tableau - Creator License (1 illik) </td>
+          <td>3</td>
+          <td>₼1,586.66 </td>
+          <td>₼4,759.98</td>
+        </tr>
+        <tr>
+
+        </tr>
+        
+
+      </table>
+    </section>
+
+    <hr style="padding-left: 35px;" class="invoice-divider" />
+    <!-- <div style="height: 2px; width: 90%; padding-left: 35px; background-color: #dddddd;" class="devider"></div> -->
+    <div class="d-flex justify-content-between">
+      <div style="width: 200px;" class="note">
+        <span style="margin-left: 15px;" class="notes-label col-6">Notes:</span>
+      </div>
+      <!-- margin-left: 700px; width: 350px; -->
+      <div style="width: 200px">
+        <div class="text-right">
+          <div class="d-flex justify-content-between">
+            <p style="color: #6d64e8;" class="summary-label">Subtotal</p>
+            <span class="summary-value">₼40,000.87</span>
+          </div>
+
+        </div>
+        <div class="text-right">
+          <div class="d-flex text-right justify-content-between">
+
+            <p style="text-align: right; width: 60px; color: #6d64e8;" class="summary-label">VAT</p>
+            <span class="summary-value">{{data.total}}</span>
+          </div>
+        </div>
+      </div>
+
+      
+    </div>
+    <div style="height: 40px;" class="total d-flex justify-content-end">
+      <span style="color: #e01b84; font-family: sans-serif; font-size: 30px;"> ₼{{data.final_amount}}</span>
+    </div>
+
+
+</body>
+
+</html>
+    """
+
+    # list_items_html = ""
+    # for idx, item in enumerate(data["desciptions"]):
+    #     # if idx == 0 or idx % 2 == 1:
+    #     list_items_html += f"""
+    #         <td style="text-align: left;" class="desc">{item["description"]}</td>
+    #         <td>{item["qty"]}</td>
+    #         <td>₼{item["unitprice"]}</td>
+    #         <td>₼{item["total_price"]}</td>
+    #     """
+    #     # elses
+    # html_string = html.format(list_items_html)
+
+    return pdfkit.from_string(html_file, output_name, options=options)
+
+
+
+# def send_mail(data: dict):
+#     msg = MailBody
+def get_pdf():
+    file = 'output32.pdf'
+
+    return file
+
+
+def get_html_string():
+    return """
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<style>
+  table {
+    font-family: arial, sans-serif;
+    width: 98%;
+    border: none;
+    margin-left: 27px;
+  }
+  tbody{
+    padding-left: 35px;
+  }
+
+  td,
+  th {
+    /* border: 1px solid #dddddd; */
+    text-align: left;
+    padding: 6px;
+    /* padding-left: 35px; */
+    text-align: right;
+
+  }
+    .th-head{
+    color: #283592;
+  }
+  
+
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
+</style>
+
+<body>
+  <div style="width: 80%; margin: auto;" class="container">
+    <div style="height: 8px;
+    background-color: #283592" class="horizontal-line"></div>
+
+    <section class="invoice-section">
+      <header style="padding: 0;">
+        <!-- <h1 style="margin-left: 10px;
+        width: 300px;
+        color: #6d64e8; font-family: sans-serif; margin-top: 40px;" class="company-name">JLTECH LLC</h1> -->
+
+        <div style="padding: 0;" class="company-info d-flex justify-content-between mt-5">
+          <ul style="list-style: none;" class="address-info">
+            <li style="margin-left: 10px;
+            width: 300px;
+            color: #6d64e8; font-family: sans-serif; height: 40px; font-size: 30px;" class="company-name p-0 m-0">JLTECH LLC</li>
+            <li>AGA Business Center 12th floor</li>
+            <li>Khojali Ave 55, Baku, Azerbaijan AZ 1001</li>
+            <li>(051) 450-00-15</li>
+          </ul>
+
+          <ul style="list-style: none;" class="bank-info flex-end">
+            <li style="color: #6d64e8;">Tax ID: 2004130131</li>
+            <li style="color: #6d64e8;">IBAN: AZ76PAHA40060AZNHC0100164830</li>
+            <li>Bank: «PAŞA Bank» ASC</li>
+            <li>S.W.I.F.T BIC: PAHAAZ22</li>
+            <li>Bank Code: 505141</li>
+            <li>TAX ID: 1700767721</li>
+            <li>Acc: AZ82NABZ01350100000000071944</li>
+          </ul>
+        </div>
+      </header>
+
+      <main style="padding-left: 35px;">
+        <h1 style="color: #283592;" class="invoice-title">Invoice</h1>
+        <span style="color: #e01b84;" class="invoice-date">{{data.date}}</span>
+
+        <section class="invoice-details row">
+          <div class="d-flex flex-column col-4">
+            <h1 class="invoice-label">Invoice for</h1>
+            <ul style="list-style: none;" class="invoice-address p-0">
+              <li>{{data.company_name}}</li>
+              <li>{{data.company_address}}</li>
+              <li>{{data.company_location}}</li>
+            </ul>
+          </div>
+
+          <div class="d-flex flex-column col-4">
+            <div class="mb-5">
+              <h4 class="invoice-label">Payable to</h4>
+              <span class="invoice-recipient">JLTECH LLC</span>
+            </div>
+            <div class="invoice-project">
+              <h4 class="invoice-label">Project</h4>
+              <span class="invoice-project-name">{{data.project_name}}</span>
+            </div>
+
+          </div>
+
+          <div class="d-flex flex-column col-4">
+
+            <div class="">
+              <h4 class="invoice-label">Invoice #</h4>
+              <span class="invoice-number">{{data.invoice_id}}</span>
+            </div>
+
+            <div>
+              <h4 class="invoice-label mt-5">Due date</h4>
+              <span class="invoice-due-date">{{data.due_date}}</span>
+            </div>
+          </div>
+          <div class="col-3"></div>
+
+        </section>
+
+        <hr class="invoice-divider" />
+
+      </main>
+      <table style="border: none;">
+        <tr style="padding-left: 35px;">
+          <th class="th-head" style="text-align: left;">Description</th>
+          <th class="th-head">Qty</th>
+          <th class="th-head">Unit price</th>
+          <th class="th-head">Total price</th>
+
+        </tr>
+        {% for desc in data.desciptions %}
+        <tr>
+          <td style="text-align: left;" class="desc">{{desc.description}}</td>
+          <td>{{desc.qty}}</td>
+          <td>₼{{desc.unitprice}}</td>
+          <td>₼{{desc.total_price}}</td>
+        {% endfor %}
+
+        </tr>
+        
+      </table>
+    </section>
+
+    <hr style="padding-left: 35px; width: 1020px" class="invoice-divider" />
+    <!-- <div style="height: 2px; width: 90%; padding-left: 35px; background-color: #dddddd;" class="devider"></div> -->
+    <div class="d-flex justify-content-between">
+      <div style="width: 200px;" class="note">
+        <span style="margin-left: 15px;" class="notes-label col-6">Notes:</span>
+      </div>
+      <!-- margin-left: 700px; width: 350px; -->
+      <div style="width: 280px;" class="totals">
+        <div class="text-right">
+          <div class="d-flex justify-content-between">
+            <p style="color: #6d64e8;" class="summary-label">Subtotal</p>
+            <span class="summary-value">₼{{data.final_amount}}</span>
+          </div>
+
+        </div>
+        <div class="text-right">
+          <div class="d-flex text-right justify-content-between">
+
+            <p style="text-align: right; width: 60px; color: #6d64e8;" class="summary-label">VAT</p>
+            <span class="summary-value">₼{{data.vat}}</span>
+          </div>
+        </div>
+      </div>
+
+      
+    </div>
+    <div style="height: 40px;" class="total d-flex justify-content-end">
+      <span style="color: #e01b84; font-family: sans-serif; font-size: 30px;"> ₼{{data.final_amount}}</span>
+    </div>
+
+
+
+
+</body>
+
+</html>
     
-#     pdfkit.from_file(html_file, pdf_name)
-
-def convert_to_pdf(html_file, output_name, options):
-    pdfkit.from_file(html_file, output_name, options=options)
-
-
-
+    """

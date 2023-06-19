@@ -1,8 +1,9 @@
 import hashlib
+from posixpath import abspath
 import time
 import os
 import json
-from fastapi import Request
+from fastapi import Request, File, UploadFile
 from fastapi.param_functions import Depends, File
 from fastapi.routing import APIRouter
 from starlette import status
@@ -10,15 +11,18 @@ from fastapi.responses import JSONResponse, HTMLResponse, RedirectResponse, Resp
 from fastapi.templating import Jinja2Templates
 from app.schemas import *
 from app.models import Project, User, Company, PdfData
-from jinja2 import Environment, FileSystemLoader
-from app.utils import convert_to_pdf
+from jinja2 import Environment, FileSystemLoader, Template
+from app.utils import convert_to_pdf, get_html_string
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from fastapi_mail import FastMail, MessageSchema, MessageType
+from core.extensions import email_conf
 
 
 router = APIRouter(prefix="", tags=["pdf"])
 
 templates = Jinja2Templates(directory="templates")
 templates_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
-print(templates_dir)
 env = Environment(loader=FileSystemLoader(templates_dir))
 
 
@@ -160,7 +164,7 @@ def convert_pdf(data: ConvertInvoiceInputSchema, request: Request):
 
 
 @router.get("/preview/{id}")
-def preview(id: int, request: Request):
+async def preview(id: int, request: Request):
     pdf_data = list(PdfData.select().where(PdfData.id == id).dicts())[0]
     company = list(Company.select().where(Company.id == pdf_data["comp_id"]).dicts())[0]
     proje = list(Project.select().where(Project.id == pdf_data["proj_id"]).dicts())[0]
@@ -168,18 +172,40 @@ def preview(id: int, request: Request):
 
     pdf_data["currency"] = proje["currency"]
     pdf_data["tax_id"] = company["tax_id"]
+    final = 0
+    for i in pdf_data["desciptions"]:
+        final += int(i["qty"]) * int(i["unitprice"])
+    total = final
+    vat = final * 18 / 100
+    pdf_data["vat"] = vat
+
+    pdf_data["final_amount"] = final + vat
+    pdf_data["total"] = total
     inv_id = pdf_data["invoice_id"]
     options = {
-    'page-size': 'Letter',
-    'margin-top': '0.75in',
-    'margin-right': '0.75in',
-    'margin-bottom': '0.75in',
-    'margin-left': '0.75in',
-    'encoding': "UTF-8",
-    'no-outline': None
-}
-    convert_to_pdf("./templates/invoice.html", f"output{inv_id}.pdf", options=options)
+        'page-size': 'A4',
+        'margin-top': '2.75in',
+        'margin-right': '0.75in',
+        'margin-bottom': '0.75in',
+        'margin-left': '0.75in',
+        'zoom': '2.0',
+        'encoding': "UTF-8",
+        'no-outline': None
+    }
 
+    html_string = get_html_string()
+    html_template = Template(html_string)
+    rendered_html = html_template.render(data=pdf_data)
+
+    await convert_to_pdf(rendered_html, f"output{inv_id}.pdf", options=options)
+    # time.sleep(5)
+    attach_name = f"output{inv_id}.pdf"
+
+
+    return FileResponse(attach_name, filename="invoice.pdf", media_type="application/pdf")
+
+    
+    
     return templates.TemplateResponse("invoice.html", {"request": request, "data": pdf_data})
 
 
@@ -194,14 +220,35 @@ def admin(request: Request):
 
 
 @router.get("/open")
-def open(request: Request):
+def openn(request: Request):
     # companies = Company.select().dicts()
 
     return templates.TemplateResponse("invoice.html", {"request": request})
 
 
 @router.get("/list-comps")
-def open(request: Request):
+def list_comps(request: Request):
     companies = list(Company.select().dicts())
 
     return companies
+
+
+@router.post("/send-email")
+async def send_mail(request: Request):
+    inv_id = list(PdfData.select(PdfData.data).order_by(PdfData.id.desc()).limit(1))[0]
+    inv_id = json.loads(inv_id.data)["invoice_id"]
+
+
+    attach_name = f"output{inv_id}.pdf"
+    
+    message = MessageSchema(
+            subject="Invoice",
+            recipients=["amilalizada@gmail.com"],
+            body="Invoice for Project",
+            subtype=MessageType.html,
+            attachments=[attach_name])
+
+
+    fm = FastMail(email_conf)
+    await fm.send_message(message)
+    return templates.TemplateResponse("invoice_create.html", {"request": request})

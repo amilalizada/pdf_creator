@@ -28,6 +28,9 @@
     text-align: right;
 
   }
+  .th-head{
+    color: #283592;
+  }
 
   tr:nth-child(even) {
     background-color: #dddddd;
@@ -69,15 +72,15 @@
 
       <main style="padding-left: 35px;">
         <h1 style="color: #283592;" class="invoice-title">Invoice</h1>
-        <span style="color: #e01b84;" class="invoice-date">11/06/2023</span>
+        <span style="color: #e01b84;" class="invoice-date">{{data.date}}</span>
 
         <section class="invoice-details row">
           <div class="d-flex flex-column col-4">
             <h1 class="invoice-label">Invoice for</h1>
             <ul style="list-style: none;" class="invoice-address p-0">
-              <li>MICROTECH MMC</li>
-              <li>Khagani Rustamov 6</li>
-              <li>Baku, Azerbaijan</li>
+              <li>{{data.company_name}}</li>
+              <li>{{data.company_address}}</li>
+              <li>{{data.company_location}}</li>
             </ul>
           </div>
 
@@ -88,7 +91,7 @@
             </div>
             <div class="invoice-project">
               <h4 class="invoice-label">Project</h4>
-              <span class="invoice-project-name">Service</span>
+              <span class="invoice-project-name">{{data.project_name}}</span>
             </div>
 
           </div>
@@ -97,12 +100,12 @@
 
             <div class="">
               <h4 class="invoice-label">Invoice #</h4>
-              <span class="invoice-number">31</span>
+              <span class="invoice-number">{{data.invoice_id}}</span>
             </div>
 
             <div>
               <h4 class="invoice-label mt-5">Due date</h4>
-              <span class="invoice-due-date">11/06/2023</span>
+              <span class="invoice-due-date">{{data.due_date}}</span>
             </div>
           </div>
           <div class="col-3"></div>
@@ -114,43 +117,37 @@
       </main>
       <table style="border: none;">
         <tr style="padding-left: 35px;">
-          <th style="text-align: left;">Description</th>
-          <th>Qty</th>
-          <th>Unit price</th>
-          <th>Total price</th>
+          <th class="th-head" style="text-align: left;">Description</th>
+          <th class="th-head">Qty</th>
+          <th class="th-head">Unit price</th>
+          <th class="th-head">Total price</th>
 
         </tr>
+        {% for desc in data.desciptions %}
         <tr>
-          <td style="text-align: left;" class="desc">Tableau - Creator License (1 illik) </td>
-          <td>3</td>
-          <td>₼1,586.66 </td>
-          <td>₼4,759.98</td>
-
-        </tr>
-        <tr>
-          <td style="text-align: left;" class="desc">Tableau - Creator License (1 illik) </td>
-          <td>3</td>
-          <td>₼10 </td>
-          <td>₼200</td>
+          <td style="text-align: left;" class="desc">{{desc.description}}</td>
+          <td>{{desc.qty}}</td>
+          <td>₼{{desc.unitprice}}</td>
+          <td>₼{{desc.total_price}}</td>
+        {% endfor %}
 
         </tr>
         
-
       </table>
     </section>
 
-    <hr style="padding-left: 35px;" class="invoice-divider" />
+    <!-- <hr style="padding-left: 35px; width: 1020px;" class="invoice-divider" /> -->
     <!-- <div style="height: 2px; width: 90%; padding-left: 35px; background-color: #dddddd;" class="devider"></div> -->
-    <div class="d-flex justify-content-between">
-      <div style="width: 200px;" class="note">
+    <div style="border-top: 2px solid rgba(0,0,0,.1); width: 1087px; margin: auto;" class="d-flex justify-content-between mt-4 mr-0">
+      <div style="width: 200px;" class="note mt-3">
         <span style="margin-left: 15px;" class="notes-label col-6">Notes:</span>
       </div>
       <!-- margin-left: 700px; width: 350px; -->
-      <div style="width: 280px;" class="totals">
+      <div style="width: 280px;" class="totals mt-3">
         <div class="text-right">
           <div class="d-flex justify-content-between">
             <p style="color: #6d64e8;" class="summary-label">Subtotal</p>
-            <span class="summary-value">₼40,000.87</span>
+            <span class="summary-value">₼{{data.final_amount}}</span>
           </div>
 
         </div>
@@ -158,7 +155,7 @@
           <div class="d-flex text-right justify-content-between">
 
             <p style="text-align: right; width: 60px; color: #6d64e8;" class="summary-label">VAT</p>
-            <span class="summary-value">₼2,998.44</span>
+            <span class="summary-value">₼{{data.vat}}</span>
           </div>
         </div>
       </div>
@@ -166,7 +163,7 @@
       
     </div>
     <div style="height: 40px;" class="total d-flex justify-content-end">
-      <span style="color: #e01b84; font-family: sans-serif; font-size: 30px;"> ₼19,658.54</span>
+      <span style="color: #e01b84; font-family: sans-serif; font-size: 30px;"> ₼{{data.final_amount}}</span>
     </div>
 
 
