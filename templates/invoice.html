@@ -15,7 +15,8 @@
     border: none;
     margin-left: 27px;
   }
-  tbody{
+
+  tbody {
     padding-left: 35px;
   }
 
@@ -28,7 +29,8 @@
     text-align: right;
 
   }
-  .th-head{
+
+  .th-head {
     color: #283592;
   }
 
@@ -52,7 +54,8 @@
           <ul style="list-style: none;" class="address-info">
             <li style="margin-left: 10px;
             width: 300px;
-            color: #6d64e8; font-family: sans-serif; height: 40px; font-size: 30px;" class="company-name p-0 m-0">JLTECH LLC</li>
+            color: #6d64e8; font-family: sans-serif; height: 40px; font-size: 30px;" class="company-name p-0 m-0">
+              JLTECH LLC</li>
             <li>AGA Business Center 12th floor</li>
             <li>Khojali Ave 55, Baku, Azerbaijan AZ 1001</li>
             <li>(051) 450-00-15</li>
@@ -100,7 +103,7 @@
 
             <div class="">
               <h4 class="invoice-label">Invoice #</h4>
-              <span class="invoice-number">{{data.invoice_id}}</span>
+              <span id="invoice_id" class="invoice-number">{{data.invoice_id}}</span>
             </div>
 
             <div>
@@ -129,16 +132,17 @@
           <td>{{desc.qty}}</td>
           <td>₼{{desc.unitprice}}</td>
           <td>₼{{desc.total_price}}</td>
-        {% endfor %}
+          {% endfor %}
 
         </tr>
-        
+
       </table>
     </section>
 
     <!-- <hr style="padding-left: 35px; width: 1020px;" class="invoice-divider" /> -->
     <!-- <div style="height: 2px; width: 90%; padding-left: 35px; background-color: #dddddd;" class="devider"></div> -->
-    <div style="border-top: 2px solid rgba(0,0,0,.1); width: 1087px; margin: auto;" class="d-flex justify-content-between mt-4 mr-0">
+    <div style="border-top: 2px solid rgba(0,0,0,.1); width: 1087px; margin: auto;"
+      class="d-flex justify-content-between mt-4 mr-0">
       <div style="width: 200px;" class="note mt-3">
         <span style="margin-left: 15px;" class="notes-label col-6">Notes:</span>
       </div>
@@ -160,15 +164,75 @@
         </div>
       </div>
 
-      
+
     </div>
     <div style="height: 40px;" class="total d-flex justify-content-end">
       <span style="color: #e01b84; font-family: sans-serif; font-size: 30px;"> ₼{{data.final_amount}}</span>
     </div>
 
 
+    <button onclick="donwload()" type="button">Download Created PDF</button>
+    <button onclick="sendEmail()" type="button">Send file to selected company email</button>
 
+    <script>
+      function donwload() {
+        const inv_id = document.getElementById('invoice_id').innerText;
+        var inpArr = []
 
+        fetch(`http://0.0.0.0:8081/api/pdf/download/${inv_id}`, {
+            method: 'GET',
+            headers: {
+              // Accept: 'application/pdf',
+              'Content-Type': 'application/pdf'
+            },
+          })
+          .then(response => response.blob())
+          .then(blob => {
+            const pdfUrl = URL.createObjectURL(blob);
+
+            // Create an anchor element
+            const link = document.createElement('a');
+            link.href = pdfUrl;
+            link.download = 'invoice.pdf'; // Specify the desired filename
+
+            // Simulate a click event to trigger the download
+            link.dispatchEvent(new MouseEvent('click'));
+
+            // Clean up the URL object
+            URL.revokeObjectURL(pdfUrl);
+          })
+          .catch(error => {
+            console.error("Error:", error);
+          });
+      }
+
+      function sendEmail() {
+        const inv_id = document.getElementById('invoice_id').innerText;
+        const companies = document.getElementById('companySelect');
+        const comp_option = companies.options[companies.selectedIndex].value;
+
+        body = {
+          "inv_id": inv_id,
+          comp_id: comp_option
+        }
+        fetch("http://0.0.0.0:8081/api/pdf/send-email", {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Email sent:", data);
+                    // window.location.replace(`http://0.0.0.0:8081/api/pdf/preview/${data["id"]}`);
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+      }
+    </script>
 </body>
 
 </html>

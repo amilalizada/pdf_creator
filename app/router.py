@@ -184,9 +184,9 @@ async def preview(id: int, request: Request):
     inv_id = pdf_data["invoice_id"]
     options = {
         'page-size': 'A4',
-        'margin-top': '2.75in',
+        'margin-top': '0.75in',
         'margin-right': '0.75in',
-        'margin-bottom': '0.75in',
+        'margin-bottom': '1.75in',
         'margin-left': '0.75in',
         'zoom': '2.0',
         'encoding': "UTF-8",
@@ -198,15 +198,16 @@ async def preview(id: int, request: Request):
     rendered_html = html_template.render(data=pdf_data)
 
     await convert_to_pdf(rendered_html, f"output{inv_id}.pdf", options=options)
-    # time.sleep(5)
-    attach_name = f"output{inv_id}.pdf"
 
+    return templates.TemplateResponse("invoice.html", {"request": request, "data": pdf_data})
+
+
+@router.get("/download/{inv_id}")
+def admin(inv_id: int, request: Request):
+    attach_name = f"output{inv_id}.pdf"
+    print(attach_name)
 
     return FileResponse(attach_name, filename="invoice.pdf", media_type="application/pdf")
-
-    
-    
-    return templates.TemplateResponse("invoice.html", {"request": request, "data": pdf_data})
 
 
 @router.get("/admin")
@@ -234,16 +235,16 @@ def list_comps(request: Request):
 
 
 @router.post("/send-email")
-async def send_mail(request: Request):
-    inv_id = list(PdfData.select(PdfData.data).order_by(PdfData.id.desc()).limit(1))[0]
-    inv_id = json.loads(inv_id.data)["invoice_id"]
-
-
-    attach_name = f"output{inv_id}.pdf"
+async def send_mail(data: SendMailInput, request: Request):
+    # inv_id = list(PdfData.select(PdfData.data).order_by(PdfData.id.desc()).limit(1))[0]
+    # inv_id = json.loads(inv_id.data)["invoice_id"]
+    company = list(Company.select(Company.email).where(Company.id == data.comp_id))[0]
+    email = company.email
+    attach_name = f"output{data.inv_id}.pdf"
     
     message = MessageSchema(
             subject="Invoice",
-            recipients=["amilalizada@gmail.com"],
+            recipients=[email],
             body="Invoice for Project",
             subtype=MessageType.html,
             attachments=[attach_name])
@@ -251,4 +252,11 @@ async def send_mail(request: Request):
 
     fm = FastMail(email_conf)
     await fm.send_message(message)
+
     return templates.TemplateResponse("invoice_create.html", {"request": request})
+
+
+@router.get("/navigation")
+async def send_mail(request: Request):
+
+    return templates.TemplateResponse("navigation.html", {"request": request})

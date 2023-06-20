@@ -81,7 +81,10 @@
 </head>
 
 <body>
-    <h1>Admin Panel</h1>
+    <div style="display: flex;">
+        <h1>Admin Panel</h1>
+        <button style="margin-left: 50px; height: 30px; margin-top: 20px; background-color: #4CAF50; cursor: pointer; color: white;" onclick="main()">Back to Main</button>
+    </div>
 <div style="display: flex;" class="creation">
     <h2>Create Company</h2>
     <form>
@@ -212,6 +215,9 @@
     </table>
 
     <script>
+        function main() {
+        window.location.replace(`http://0.0.0.0:8081/api/pdf/navigation`);
+      }
         document.getElementById("create_company").addEventListener("click", function (event) {
             event.preventDefault()
 

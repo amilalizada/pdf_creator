@@ -34,6 +34,7 @@
             padding: 10px;
             margin-bottom: 10px;
             width: 300px;
+            border-radius: 5px;
         }
 
         input[type="submit"] {
@@ -61,8 +62,9 @@
 </head>
 
 <body>
+    <button style="margin-left: 50px; height: 30px; background-color: #4CAF50; cursor: pointer; color: white; border-radius: 5px; border: none;" onclick="main()">Back to Main</button>
 
-    <form id="form">
+    <form id="form" class="mt-5">
         <div class="first">
             <label for="companySelect">Select Company:</label>
             <select id="companySelect" name="companySelect">
@@ -113,6 +115,9 @@
     <input onclick="createPdf()" id="create_doc" type="submit" value="Create Invoice">
 
     <script>
+        function main() {
+        window.location.replace(`http://0.0.0.0:8081/api/pdf/navigation`);
+      }
         var countOfDesc = prompt("Please enter count of descriptions first: ")
         while (countOfDesc > 1) {
             document.querySelector(".section").innerHTML += `<div class="desc col-3 mb-5 mr-5">
@@ -198,7 +203,7 @@
             const projects_select = document.getElementById('projectSelect');
             var date = document.getElementById("startDate").value
             var dueDate = document.getElementById("endDate").value
-            var invoice = document.getElementById("invoiceId").value
+            const invoice = document.getElementById("invoiceId").value
             var comp_option = companies.options[companies.selectedIndex].value;
             var proj_option = projects_select.options[projects_select.selectedIndex].value;
             var descs = document.querySelectorAll(".desc")

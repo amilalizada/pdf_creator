@@ -58,3 +58,8 @@ class ConvertInvoiceInputSchema(BaseModel):
     due_date: str
     invoice_id: str
     descriptions: List
+
+
+class SendMailInput(BaseModel):
+    inv_id: str
+    comp_id: str

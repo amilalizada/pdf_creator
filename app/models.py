@@ -28,6 +28,7 @@ class User(BaseModel):
 class Company(BaseModel):
     id = AutoField()
     name = CharField()
+    email = CharField()
     address = CharField()
     location = CharField()
     tax_id = BigIntegerField()

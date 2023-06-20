@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Centered Page with Buttons</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .container {
+      text-align: center;
+    }
+    
+    .button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome!</h1>
+    <button onclick="goToAdmin()" class="button">Admin</button>
+    <button onclick="goToInvoice()" class="button">Create Invoice</button>
+    <button class="button">Create TTH</button>
+  </div>
+
+
+  <script>
+      function goToInvoice() {
+        window.location.replace(`http://0.0.0.0:8081/api/pdf/create-doc`);
+      }
+      function goToAdmin() {
+        window.location.replace(`http://0.0.0.0:8081/api/pdf/admin`);
+      }
+
+  </script>
+</body>
+</html>
