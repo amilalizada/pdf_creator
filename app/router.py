@@ -167,9 +167,11 @@ def convert_pdf(data: ConvertInvoiceInputSchema, request: Request):
 async def preview(id: int, request: Request):
     pdf_data = list(PdfData.select().where(PdfData.id == id).dicts())[0]
     company = list(Company.select().where(Company.id == pdf_data["comp_id"]).dicts())[0]
+    comp_id=pdf_data["comp_id"]
     proje = list(Project.select().where(Project.id == pdf_data["proj_id"]).dicts())[0]
     pdf_data = json.loads(pdf_data["data"])
-
+    pdf_data["date"] = pdf_data["date"].replace("-","/")
+    pdf_data["due_date"] = pdf_data["due_date"].replace("-","/")
     pdf_data["currency"] = proje["currency"]
     pdf_data["tax_id"] = company["tax_id"]
     final = 0
@@ -178,19 +180,17 @@ async def preview(id: int, request: Request):
     total = final
     vat = final * 18 / 100
     pdf_data["vat"] = vat
-
+    pdf_data["comp_id"] = comp_id
     pdf_data["final_amount"] = final + vat
     pdf_data["total"] = total
     inv_id = pdf_data["invoice_id"]
     options = {
         'page-size': 'A4',
-        'margin-top': '0.75in',
-        'margin-right': '0.75in',
-        'margin-bottom': '1.75in',
-        'margin-left': '0.75in',
-        'zoom': '2.0',
-        'encoding': "UTF-8",
-        'no-outline': None
+        'margin-top': '20mm',
+        'margin-right': '0mm',
+        'margin-bottom': '0mm',
+        'margin-left': '0mm',
+        'zoom': '1.0'
     }
 
     html_string = get_html_string()
@@ -236,8 +236,7 @@ def list_comps(request: Request):
 
 @router.post("/send-email")
 async def send_mail(data: SendMailInput, request: Request):
-    # inv_id = list(PdfData.select(PdfData.data).order_by(PdfData.id.desc()).limit(1))[0]
-    # inv_id = json.loads(inv_id.data)["invoice_id"]
+   
     company = list(Company.select(Company.email).where(Company.id == data.comp_id))[0]
     email = company.email
     attach_name = f"output{data.inv_id}.pdf"
@@ -253,10 +252,10 @@ async def send_mail(data: SendMailInput, request: Request):
     fm = FastMail(email_conf)
     await fm.send_message(message)
 
-    return templates.TemplateResponse("invoice_create.html", {"request": request})
+    return {"status": "ok"}
 
 
 @router.get("/navigation")
-async def send_mail(request: Request):
+async def navig(request: Request):
 
     return templates.TemplateResponse("navigation.html", {"request": request})

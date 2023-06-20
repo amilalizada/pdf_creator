@@ -119,6 +119,10 @@
         window.location.replace(`http://0.0.0.0:8081/api/pdf/navigation`);
       }
         var countOfDesc = prompt("Please enter count of descriptions first: ")
+        console.log(countOfDesc);
+        if (countOfDesc == null){
+            window.location.replace(`http://0.0.0.0:8081/api/pdf/navigation`)
+        }
         while (countOfDesc > 1) {
             document.querySelector(".section").innerHTML += `<div class="desc col-3 mb-5 mr-5">
             <label for="description">Description:</label>

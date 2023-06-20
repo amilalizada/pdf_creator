@@ -40,9 +40,10 @@
 </style>
 
 <body>
-  <div style="width: 80%; margin: auto;" class="container">
-    <div style="height: 8px;
+  <input id="hidden" value="{{data.comp_id}}" type="hidden">
+  <div style="height: 8px; width: 60%; margin: auto;
     background-color: #283592" class="horizontal-line"></div>
+  <div style="width: 80%; margin: auto;" class="container">
 
     <section class="invoice-section">
       <header style="padding: 0;">
@@ -151,7 +152,7 @@
         <div class="text-right">
           <div class="d-flex justify-content-between">
             <p style="color: #6d64e8;" class="summary-label">Subtotal</p>
-            <span class="summary-value">₼{{data.final_amount}}</span>
+            <span class="summary-value">₼{{data.total}}</span>
           </div>
 
         </div>
@@ -208,12 +209,13 @@
 
       function sendEmail() {
         const inv_id = document.getElementById('invoice_id').innerText;
-        const companies = document.getElementById('companySelect');
-        const comp_option = companies.options[companies.selectedIndex].value;
+        const comp_id = document.getElementById('hidden').value;
+        console.log(document.getElementById('hidden'));
+      
 
         body = {
           "inv_id": inv_id,
-          comp_id: comp_option
+          comp_id: comp_id
         }
         fetch("http://0.0.0.0:8081/api/pdf/send-email", {
                     method: 'POST',
@@ -226,10 +228,15 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log("Email sent:", data);
+                  alert("Email successfully sent")
+                  window.location.replace(`http://0.0.0.0:8081/api/pdf/navigation`);
+
                     // window.location.replace(`http://0.0.0.0:8081/api/pdf/preview/${data["id"]}`);
                 })
                 .catch(error => {
-                    console.error("Error:", error);
+                  window.location.replace(`http://0.0.0.0:8081/api/pdf/navigation`);
+
+                  console.error("Error:", error);
                 });
       }
     </script>
