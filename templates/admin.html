@@ -35,6 +35,8 @@
             background-color: #4CAF50;
             color: white;
             cursor: pointer;
+            border-radius: 5px;
+            border: 1px solid;
         }
         input[type="email"] {
             padding: 10px;
@@ -83,7 +85,11 @@
 <body>
     <div style="display: flex;">
         <h1>Admin Panel</h1>
-        <button style="margin-left: 50px; height: 30px; margin-top: 20px; background-color: #4CAF50; cursor: pointer; color: white;" onclick="main()">Back to Main</button>
+        <button style="margin-left: 50px; height: 30px; margin-top: 20px;background-color: #4CAF50;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+        border: 1px solid;" onclick="main()">Back to Main</button>
     </div>
 <div style="display: flex;" class="creation">
     <h2>Create Company</h2>
@@ -133,7 +139,11 @@
       <label for="password">Password:</label>
       <input type="password" id="password" name="password" required>
     
-      <button id="create_user" type="button">Create user</button>
+      <button style="background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+      border: 1px solid;" id="create_user" type="button">Create user</button>
     </form>
 </div>
 <div class="container">
@@ -181,7 +191,6 @@
             <th>Name</th>
             <th>Addres</th>
         </tr>
-        <!-- Example row, replace with dynamic data from backend -->
         {% for comp in companies %}
         <tr>
             <td>{{comp.id}}</td>
@@ -208,7 +217,6 @@
             <td>{{proj.name}}</td>
             <td>{{proj.company_name}}</td>
             <td>{{proj.currency}}</td>
-
         </tr>
         {% endfor %}
 

@@ -6,6 +6,34 @@
 <head>
     <title>Create Invoice</title>
     <style>
+        #myTable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #myTable th,
+        #myTable td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            /* Add a bottom border to each cell */
+        }
+
+        #myTable th {
+            background-color: #f2f2f2;
+        }
+
+        .table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .delete-icon {
+            cursor: pointer;
+        }
+
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -31,6 +59,7 @@
         input[type="number"],
         input[type="date"],
         input[type="submit"] {
+            border: 1px solid;
             padding: 10px;
             margin-bottom: 10px;
             width: 300px;
@@ -62,38 +91,47 @@
 </head>
 
 <body>
-    <button style="margin-left: 50px; height: 30px; background-color: #4CAF50; cursor: pointer; color: white; border-radius: 5px; border: none;" onclick="main()">Back to Main</button>
+    <button
+        style="margin-left: 0px; height: 30px; background-color: #4CAF50; cursor: pointer; color: white; border-radius: 5px; border: none;"
+        onclick="main()">Back to Main</button>
 
-    <form id="form" class="mt-5">
-        <div class="first">
-            <label for="companySelect">Select Company:</label>
-            <select id="companySelect" name="companySelect">
-                <option value="0">Companies</option>
-
-                {% for comp in companies %}
-                <option value="{{comp.id}}">{{comp.name}}</option>
-                {% endfor %}
-                <!-- Add more options dynamically based on available companies -->
-            </select>
-
-            <label for="projectSelect">Select Project:</label>
-            <select id="projectSelect" name="projectSelect">
-
-                <!-- Add more options dynamically based on available projects -->
-            </select>
-
-            <label for="startDate">Date:</label>
-            <input type="date" id="startDate" name="startDate">
-
-            <label for="endDate">Due Date:</label>
-            <input type="date" id="endDate" name="endDate">
-
-            <label for="invoiceId">Invoice ID:</label>
+    <form style="width: 80%;" id="form" class="mt-5">
+        <div class="first row w-100">
+            <div class="col-4">
+                <label for="companySelect">Select Company:</label>
+                <select id="companySelect" name="companySelect">
+                    <option value="0">Companies</option>
+    
+                    {% for comp in companies %}
+                    <option value="{{comp.id}}">{{comp.name}}</option>
+                    {% endfor %}
+                    <!-- Add more options dynamically based on available companies -->
+                </select>
+    
+                <label for="projectSelect">Select Project:</label>
+                <select id="projectSelect" name="projectSelect">
+    
+                    <!-- Add more options dynamically based on available projects -->
+                </select>
+    
+            </div>
+            <div class="col-4">
+                <label for="startDate">Date:</label>
+                <input type="date" id="startDate" name="startDate">
+    
+                <label for="endDate">Due Date:</label>
+                <input type="date" id="endDate" name="endDate">
+            </div>
+            
+            <div class="col-4">
+                <label for="invoiceId">Invoice ID:</label>
             <input type="number" id="invoiceId" name="invoiceId" placeholder="Enter invoice ID">
+            </div>
+            
         </div>
 
 
-        <div class="section container row">
+        <!-- <div class="section container row">
             <div class="desc col-3 mb-5 mr-5">
                 <label for="description">Description:</label>
                 <input type="text" id="description" name="description" placeholder="Enter description">
@@ -106,36 +144,63 @@
             </div>
             <!-- <label for="totalPrice">Total Price:</label>
             <input type="number" id="totalPrice" name="totalPrice" placeholder="Enter total price"> -->
-        </div>
+        <!-- </div> --> 
 
 
     </form>
+    <section class="mt-5">
+        <table id="myTable">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="desc">
+                    <td id="description"><input style="width: 100%;" type="text"></td>
+                    <td id="quantity"><input style="width: 90%;" type="number"></td>
+                    <td id="unitprice"><input style="width: 90%;" type="number"></td>
+                    <td><span class="delete-icon">&#128465;</span></td>
+                </tr>
+                <!-- Add more rows as needed -->
+            </tbody>
+        </table>
+
+        <button class="mt-5 mb-5" style="background-color: #4CAF50;
+        color: white;
+        cursor: pointer; border-radius: 5px; border: 1px" onclick="addRow()" type="button">Add Row</button>
+    </section>
+
+
     <!-- <button type="button" id="addSectionButton">Add Section</button> -->
 
     <input onclick="createPdf()" id="create_doc" type="submit" value="Create Invoice">
 
     <script>
         function main() {
-        window.location.replace(`http://0.0.0.0:8081/api/pdf/navigation`);
-      }
-        var countOfDesc = prompt("Please enter count of descriptions first: ")
-        console.log(countOfDesc);
-        if (countOfDesc == null){
-            window.location.replace(`http://0.0.0.0:8081/api/pdf/navigation`)
+            window.location.replace(`http://0.0.0.0:8081/api/pdf/navigation`);
         }
-        while (countOfDesc > 1) {
-            document.querySelector(".section").innerHTML += `<div class="desc col-3 mb-5 mr-5">
-            <label for="description">Description:</label>
-            <input type="text" id="description" name="description" placeholder="Enter description">
+        // var countOfDesc = prompt("Please enter count of descriptions first: ")
+        // console.log(countOfDesc);
+        // if (countOfDesc == null) {
+        //     window.location.replace(`http://0.0.0.0:8081/api/pdf/navigation`)
+        // }
+        // while (countOfDesc > 1) {
+        //     document.querySelector(".section").innerHTML += `<div class="desc col-3 mb-5 mr-5">
+        //     <label for="description">Description:</label>
+        //     <input type="text" id="description" name="description" placeholder="Enter description">
 
-            <label for="quantity">Quantity:</label>
-            <input type="number" id="quantity" name="quantity" placeholder="Enter quantity">
+        //     <label for="quantity">Quantity:</label>
+        //     <input type="number" id="quantity" name="quantity" placeholder="Enter quantity">
 
-            <label for="unitPrice">Unit Price:</label>
-            <input type="number" id="unitPrice" name="unitPrice" placeholder="Enter unit price">`
+        //     <label for="unitPrice">Unit Price:</label>
+        //     <input type="number" id="unitPrice" name="unitPrice" placeholder="Enter unit price">`
 
-            countOfDesc -= 1
-        }
+        //     countOfDesc -= 1
+        // }
         // document.getElementById("addSectionButton").addEventListener("click", function (e) {
 
         // })
@@ -175,7 +240,6 @@
             });
 
         companies.addEventListener("change", e => {
-            console.log((projects_select));
 
             projects_select.innerHTML = ''
             projects_select.innerHTML = '<option class="project" value="">Projects</option>'
@@ -211,22 +275,20 @@
             var comp_option = companies.options[companies.selectedIndex].value;
             var proj_option = projects_select.options[projects_select.selectedIndex].value;
             var descs = document.querySelectorAll(".desc")
+
+            console.log(descs);
             var inpArr = []
             descs.forEach((div) => {
-                var descInp = div.querySelector("#description").value
-                var qty = div.querySelector("#quantity").value
-                var unitPrice = div.querySelector("#unitPrice").value
-                inpArr.push(
-                    {
-                        "description": descInp,
-                        "qty": qty,
-                        "unitprice": unitPrice,
-                        "total_price": qty * unitPrice
-                    }
-                )
+                var descInp = div.querySelector("#description input").value;
+                var qty = div.querySelector("#quantity input").value
+                var unitPrice = div.querySelector("#unitprice input").value
+                inpArr.push({
+                    "description": descInp,
+                    "qty": qty,
+                    "unitprice": unitPrice,
+                    "total_price": qty * unitPrice
+                })
             })
-
-            console.log(inpArr);
 
             var body = {
                 comp_id: comp_option,
@@ -253,6 +315,49 @@
                 .catch(error => {
                     console.error("Error:", error);
                 });
+        }
+
+        function addRow() {
+            var table = document.getElementById("myTable");
+            var tbody = table.getElementsByTagName("tbody")[0];
+
+            var newRow = document.createElement("tr");
+            newRow.className = "desc"
+            var descriptionCell = document.createElement("td");
+            descriptionCell.id = "description"
+            var descriptionInput = document.createElement("input");
+            descriptionInput.type = "text";
+            descriptionInput.style = "width: 100%;";
+            descriptionCell.appendChild(descriptionInput);
+            newRow.appendChild(descriptionCell);
+
+            var quantityCell = document.createElement("td");
+            quantityCell.id = "quantity"
+            var quantityInput = document.createElement("input");
+            quantityInput.type = "number";
+            quantityInput.style = "width: 90%;"
+            quantityCell.appendChild(quantityInput);
+            newRow.appendChild(quantityCell);
+
+            var unitPriceCell = document.createElement("td");
+            unitPriceCell.id = "unitprice"
+            var unitPriceInput = document.createElement("input");
+            unitPriceInput.type = "number";
+            unitPriceInput.style = "width: 90%;";
+            unitPriceCell.appendChild(unitPriceInput);
+            newRow.appendChild(unitPriceCell);
+
+            var actionsCell = document.createElement("td");
+            var deleteIcon = document.createElement("span");
+            deleteIcon.className = "delete-icon";
+            deleteIcon.innerHTML = "&#128465;";
+            deleteIcon.addEventListener("click", function () {
+                tbody.removeChild(newRow);
+            });
+            actionsCell.appendChild(deleteIcon);
+            newRow.appendChild(actionsCell);
+
+            tbody.appendChild(newRow);
         }
     </script>
 </body>

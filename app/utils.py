@@ -191,6 +191,12 @@ def get_html_string():
       <span style="color: #e01b84; font-family: sans-serif; font-size: 30px;"> ₼{{data.final_amount}}</span>
     </div>
 
+
+
+    <div style="height: 40px;" class="total d-flex justify-content-end">
+      <img src="./images/ri_1.png" alt="Girl in a jacket" width="500" height="600">
+    </div>
+
 </body>
 
 </html>
