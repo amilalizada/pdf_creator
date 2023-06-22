@@ -1,12 +1,13 @@
 import pdfkit
+import base64
 from ssl import create_default_context
 from email.mime.text import MIMEText
 from smtplib import SMTP
 
-async def convert_to_pdf(html_file, output_name, options=None, data=None):
+async def convert_to_pdf(html_file, output_name, config_path, options=None, data=None):
 
-
-    return pdfkit.from_string(html_file, output_name, options=options)
+    config = pdfkit.configuration(wkhtmltopdf=config_path)
+    return pdfkit.from_string(html_file, output_name, options=options, configuration=config)
 
 
 
@@ -17,6 +18,11 @@ def get_pdf():
 
     return file
 
+
+def get_image_file_as_base64_data():
+    with open("/Users/amil/Documents/Projects/pdf_creator/images/sign.png", 'rb') as image_file:
+
+        return base64.b64encode(image_file.read())
 
 def get_html_string():
     return """
@@ -192,9 +198,8 @@ def get_html_string():
     </div>
 
 
-
-    <div style="height: 40px;" class="total d-flex justify-content-end">
-      <img src="./images/ri_1.png" alt="Girl in a jacket" width="500" height="600">
+    <div style="height: 40px;" class="mt-5">
+      <img class="padding-left: 25px" src="/Users/amil/Documents/Projects/pdf_creator/images/sign.png" alt="Image">
     </div>
 
 </body>

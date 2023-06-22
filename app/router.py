@@ -19,7 +19,7 @@ from fastapi.templating import Jinja2Templates
 from app.schemas import *
 from app.models import Project, User, Company, PdfData
 from jinja2 import Environment, FileSystemLoader, Template
-from app.utils import convert_to_pdf, get_html_string
+from app.utils import convert_to_pdf, get_html_string, get_image_file_as_base64_data
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from fastapi_mail import FastMail, MessageSchema, MessageType
@@ -30,6 +30,7 @@ router = APIRouter(prefix="", tags=["pdf"])
 
 templates = Jinja2Templates(directory="templates")
 templates_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+
 env = Environment(loader=FileSystemLoader(templates_dir))
 
 
@@ -194,13 +195,16 @@ async def preview(id: int, request: Request):
         "margin-bottom": "0mm",
         "margin-left": "0mm",
         "zoom": "1.0",
+        "enable-local-file-access": True,
     }
-
+    # img = get_image_file_as_base64_data()
+    # print(img)
+    # pdf_data["img"] = img
     html_string = get_html_string()
     html_template = Template(html_string)
     rendered_html = html_template.render(data=pdf_data)
     wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
-    await convert_to_pdf(rendered_html, f"output{inv_id}.pdf", options=options, configuration=pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path))
+    await convert_to_pdf(rendered_html, f"output{inv_id}.pdf", options=options, config_path=wkhtmltopdf_path)
 
     return templates.TemplateResponse(
         "invoice.html", {"request": request, "data": pdf_data}
