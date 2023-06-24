@@ -20,7 +20,15 @@ from fastapi.templating import Jinja2Templates
 from app.schemas import *
 from app.models import Project, User, Company, PdfData, Contract, TTAData
 from jinja2 import Environment, FileSystemLoader, Template
-from app.utils import convert_to_pdf, get_html_string, get_image_file_as_base64_data, get_tta_html_string, date_covnerting_to_human
+from app.utils import (
+    convert_to_pdf,
+    get_html_string,
+    get_image_file_as_base64_data,
+    get_tta_html_string,
+    date_covnerting_to_human,
+    convert_pdf_to_doc,
+    aa
+)
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from fastapi_mail import FastMail, MessageSchema, MessageType
@@ -79,7 +87,6 @@ def create_user(data: CreateUserInput):
 
 @router.get("/invoice-create")
 def create_user_get(request: Request):
-
     return templates.TemplateResponse("invoice_create.html", {"request": request})
 
 
@@ -174,10 +181,14 @@ async def preview(id: int, request: Request):
     company = list(Company.select().where(Company.id == pdf_data["comp_id"]).dicts())[0]
     comp_id = pdf_data["comp_id"]
     proje = list(Project.select().where(Project.id == pdf_data["proj_id"]).dicts())[0]
+    print(proje["currency"])
     pdf_data = json.loads(pdf_data["data"])
     pdf_data["date"] = pdf_data["date"].replace("-", "/")
     pdf_data["due_date"] = pdf_data["due_date"].replace("-", "/")
-    pdf_data["currency"] = proje["currency"]
+    currency = "₼"
+    if proje["currency"] == "usd":
+        currency = "$"
+    pdf_data["cur_icon"] = currency
     pdf_data["tax_id"] = company["tax_id"]
     final = 0
     for i in pdf_data["desciptions"]:
@@ -205,7 +216,12 @@ async def preview(id: int, request: Request):
     html_template = Template(html_string)
     rendered_html = html_template.render(data=pdf_data)
     wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
-    await convert_to_pdf(rendered_html, f"output{inv_id}.pdf", options=options, config_path=wkhtmltopdf_path)
+    await convert_to_pdf(
+        rendered_html,
+        f"output{inv_id}.pdf",
+        options=options,
+        config_path=wkhtmltopdf_path,
+    )
 
     return templates.TemplateResponse(
         "invoice.html", {"request": request, "data": pdf_data}
@@ -257,7 +273,6 @@ def list_comps(request: Request):
 
 @router.get("/contract-list/{comp_id}")
 def list_contracts(comp_id: int, request: Request):
-
     contracts = list(Contract.select().where(Contract.comp_id == comp_id).dicts())
 
     return contracts
@@ -314,11 +329,25 @@ async def navig(request: Request):
 @router.get("/tta-preview/{c_id}")
 async def prew_tta(c_id: int, request: Request):
     contract_doc_data = list(TTAData.select().where(TTAData.id == c_id).dicts())[0]
-    company = list(Company.select().where(Company.id == contract_doc_data["comp_id"]).dicts())[0]
-    contract = list(Contract.select().where(Contract.id == contract_doc_data["contract_id"]).dicts())[0]
+    company = list(
+        Company.select().where(Company.id == contract_doc_data["comp_id"]).dicts()
+    )[0]
+    contract = list(
+        Contract.select().where(Contract.id == contract_doc_data["contract_id"]).dicts()
+    )[0]
     data = json.loads(contract_doc_data["data"])
     converted_date = date_covnerting_to_human(contract["date"])
-    contract_doc_data["create_date"] = contract_doc_data["create_date"].replace("-", ".")
+    contract_doc_data["create_date"] = contract_doc_data["create_date"].replace(
+        "-", "."
+    )
+    final = 0
+    for i in data["desc"]:
+        final += int(i["qty"]) * int(i["price_one"])
+    total = final
+    vat = final * 18 / 100
+    cur_icon = "₼"
+    if data["currency"] == "usd":
+        cur_icon = "$"
     doc_data = {
         "company_name": company["name"],
         "drc_name": contract_doc_data["name"],
@@ -328,6 +357,12 @@ async def prew_tta(c_id: int, request: Request):
         "additional": data["additional"],
         "po": data["po"],
         "descs": data["desc"],
+        "position": data["position"],
+        "currency": data["currency"],
+        "vat": vat,
+        "final": total,
+        "total": round(final + vat, 2),
+        "cur_icon": cur_icon,
     }
     options = {
         "page-size": "A4",
@@ -335,15 +370,17 @@ async def prew_tta(c_id: int, request: Request):
         "margin-right": "0mm",
         "margin-bottom": "0mm",
         "margin-left": "0mm",
-        "zoom": "1.0mm"
+        "zoom": "1.0",
     }
     # print(data)
     html_string = get_tta_html_string()
     html_template = Template(html_string)
-    rendered_html = html_template.render(data=doc_data)
+    rendered_html = html_template.render(data=doc_data, options=options)
     wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
 
-    await convert_to_pdf(rendered_html, f"tta{c_id}.pdf", options=options, config_path=wkhtmltopdf_path)
+    await convert_to_pdf(rendered_html, f"tta{c_id}.pdf")
+    doc_file = f"tta_doc_{c_id}.docx"
+    await convert_pdf_to_doc(f"tta{c_id}.pdf", doc_file)
 
     return templates.TemplateResponse(
         "tta.html", {"request": request, "data": doc_data}
@@ -352,9 +389,8 @@ async def prew_tta(c_id: int, request: Request):
 
 @router.get("/tta-create")
 async def tta_get(request: Request):
-
     companies = Company.select()
-    
+
     return templates.TemplateResponse(
         "tta_create.html", {"request": request, "companies": companies}
     )
@@ -362,13 +398,12 @@ async def tta_get(request: Request):
 
 @router.post("/tta-create")
 async def tta_post(data: TTAInputSchema, reuqest: Request):
-
     contract = Contract.create(
         name=data.name.strip(),
         comp_id=data.comp_id,
         date=data.date,
         currency=data.currency,
-        created_at=int(time.time())
+        created_at=int(time.time()),
     )
 
     return {"status": "ok"}
@@ -376,12 +411,12 @@ async def tta_post(data: TTAInputSchema, reuqest: Request):
 
 @router.post("/tta-doc")
 async def tta_doc_post(data: TTADocInputSchema, reuqest: Request):
-
     obj = {
         "currency": data.currency,
         "desc": data.descs,
         "additional": data.additional,
-        "po": data.po
+        "po": data.po,
+        "position": data.position,
     }
 
     tta_doc = TTAData.create(
@@ -390,9 +425,7 @@ async def tta_doc_post(data: TTADocInputSchema, reuqest: Request):
         contract_id=int(data.contract_id),
         date=data.date,
         data=json.dumps(obj, separators=(",", ":")),
-        create_date=data.date
+        create_date=data.date,
     )
 
     return {"id": tta_doc.id}
-
-

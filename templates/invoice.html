@@ -143,8 +143,8 @@
         <tr>
           <td style="text-align: left;" class="desc">{{desc.description}}</td>
           <td>{{desc.qty}}</td>
-          <td>₼{{desc.unitprice}}</td>
-          <td>₼{{desc.total_price}}</td>
+          <td>{{data.cur_icon}}{{desc.unitprice}}</td>
+          <td>{{data.cur_icon}}{{desc.total_price}}</td>
           {% endfor %}
 
         </tr>
@@ -164,7 +164,7 @@
         <div class="text-right">
           <div class="d-flex justify-content-between">
             <p style="color: #6d64e8;" class="summary-label">Subtotal</p>
-            <span class="summary-value">₼{{data.total}}</span>
+            <span class="summary-value">{{data.cur_icon}}{{data.total}}</span>
           </div>
 
         </div>
@@ -172,7 +172,7 @@
           <div class="d-flex text-right justify-content-between">
 
             <p style="text-align: right; width: 60px; color: #6d64e8;" class="summary-label">VAT</p>
-            <span class="summary-value">₼{{data.vat}}</span>
+            <span class="summary-value">{{data.cur_icon}}{{data.vat}}</span>
           </div>
         </div>
       </div>
@@ -180,7 +180,7 @@
 
     </div>
     <div style="height: 40px;" class="total d-flex justify-content-end">
-      <span style="color: #e01b84; font-family: sans-serif; font-size: 30px;"> ₼{{data.final_amount}}</span>
+      <span style="color: #e01b84; font-family: sans-serif; font-size: 30px;"> {{data.cur_icon}}{{data.final_amount}}</span>
     </div>
 
     <div style="height: 40px;" class="mt-5">

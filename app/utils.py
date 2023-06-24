@@ -3,26 +3,50 @@ import base64
 from ssl import create_default_context
 from email.mime.text import MIMEText
 from smtplib import SMTP
+from pdf2docx import Converter
+from html2docx import html2docx
+def aa():
+  with open("./templates/tta.html") as fp:
+    html = fp.read()
 
-async def convert_to_pdf(html_file, output_name, config_path, options=None, data=None):
+# html2docx() returns an io.BytesIO() object. The HTML must be valid.
+    buf = html2docx(html, title="ccc")
 
+    with open("my.docx", "wb") as fp:
+        fp.write(buf.getvalue())
+
+
+async def convert_pdf_to_doc(pdf_path, doc_path):
+    # Create a Converter object
+    pdf = Converter(pdf_path)
+
+    # Convert PDF to DOC
+    pdf.convert(doc_path, start=0, end=None)
+
+    # Close the Converter object
+    pdf.close()
+
+async def convert_to_pdf(html_file, output_name, config_path=None, options=None, data=None):
     config = pdfkit.configuration(wkhtmltopdf=config_path)
-    return pdfkit.from_string(html_file, output_name, options=options, configuration=config)
-
+    return pdfkit.from_string(
+        html_file, output_name, options=options, configuration=config
+    )
 
 
 # def send_mail(data: dict):
 #     msg = MailBody
 def get_pdf():
-    file = 'output32.pdf'
+    file = "output32.pdf"
 
     return file
 
 
 def get_image_file_as_base64_data():
-    with open("/Users/amil/Documents/Projects/pdf_creator/images/sign.png", 'rb') as image_file:
-
+    with open(
+        "/Users/amil/Documents/Projects/pdf_creator/images/sign.png", "rb"
+    ) as image_file:
         return base64.b64encode(image_file.read())
+
 
 def get_html_string():
     return """
@@ -157,8 +181,8 @@ def get_html_string():
         <tr>
           <td style="text-align: left;" class="desc">{{desc.description}}</td>
           <td>{{desc.qty}}</td>
-          <td>₼{{desc.unitprice}}</td>
-          <td>₼{{desc.total_price}}</td>
+          <td>{{data.cur_icon}}{{desc.unitprice}}</td>
+          <td>{{data.cur_icon}}{{desc.total_price}}</td>
         {% endfor %}
 
         </tr>
@@ -176,7 +200,7 @@ def get_html_string():
         <div class="text-right">
           <div class="d-flex justify-content-between">
             <p style="color: #6d64e8;" class="summary-label">Subtotal</p>
-            <span class="summary-value">₼{{data.final_amount}}</span>
+            <span class="summary-value">{{data.cur_icon}}{{data.final_amount}}</span>
           </div>
 
         </div>
@@ -184,7 +208,7 @@ def get_html_string():
           <div class="d-flex text-right justify-content-between">
 
             <p style="text-align: right; width: 60px; color: #6d64e8;" class="summary-label">VAT</p>
-            <span class="summary-value">₼{{data.vat}}</span>
+            <span class="summary-value">{{data.cur_icon}}{{data.vat}}</span>
           </div>
         </div>
       </div>
@@ -192,7 +216,7 @@ def get_html_string():
       
     </div>
     <div style="height: 40px;" class="total d-flex justify-content-end">
-      <span style="color: #e01b84; font-family: sans-serif; font-size: 30px;"> ₼{{data.final_amount}}</span>
+      <span style="color: #e01b84; font-family: sans-serif; font-size: 30px;"> {{data.cur_icon}}{{data.final_amount}}</span>
     </div>
 
 
@@ -208,7 +232,7 @@ def get_html_string():
 
 
 def get_tta_html_string():
-  return """
+    return """
     <!DOCTYPE html>
 <html lang="en">
 
@@ -223,7 +247,6 @@ def get_tta_html_string():
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         table {
@@ -249,81 +272,94 @@ def get_tta_html_string():
 </head>
 
 <body>
-    <div style="width: 60%; margin: auto;;" class="my_container mt-5 mb-5 p-0">
+    <div style="width: 70%; margin: auto;" class="my_container mt-5 mb-5 p-0">
         <div class="header d-flex justify-content-between w-100">
             <div class="d-flex flex-column">
-                <span style="font-weight: bold;">
+                <div class="mt-2"  style="font-weight: bold;">
                     Təsdiq edirəm:
-
-                </span>
-                <span style="font-weight: bold;">
+                </div>
+                <!-- <div class="mt-2"  style="font-weight: bold;">
                     "{{data.company_name}}" MMC
-                </span style="font-weight: bold;">
-                <span style="font-weight: bold;">
-                    Department direktoru:
-                </span>
-                <span class="mt-3" style="font-weight: bold;">
+                </div style="font-weight: bold;"> -->
+                <div class="mt-2"  style="font-weight: bold;">
+                    {{data.position}}u:
+                </div>
+                <div class="mt-3" style="font-weight: bold;">
                     {{data.drc_name}}
-                </span>
+                </div>
             </div>
             <div class="d-flex flex-column">
-                <span style="font-weight: bold;">
+                <div class="mt-2"  style="font-weight: bold;">
                     Təsdiq edirəm:
-
-                </span>
-                <span style="font-weight: bold;">
+                </div>
+                <!-- <div class="mt-2"  style="font-weight: bold;">
                     "JLTECH" LLC
-                </span>
-                <span style="font-weight: bold;">
-                    direktor:
-                </span>
-                <span class="mt-3" style="font-weight: bold;">
+                </div> -->
+                <div class="mt-2"  style="font-weight: bold;">
+                    Direktor:
+                </div>
+                <div class="mt-3" style="font-weight: bold;">
                     Abdulla İsayev
-                </span>
+                </div>
             </div>
         </div>
-        <div style="margin-top: 100px;" class="center d-flex justify-content-center">
-            <p class="text-center d-flex flex-column">
-                <span style="font-weight: bold;" class="mt-1">“{{data.company_name}}” MMC və “JLTECH” MMC</span>
-                <span style="font-weight: bold;" class="mt-1">arasında bağlanmış {{data.con_name}} saylı {{data.con_date}} il tarixli müqavilənin</span>
-                <span style="font-weight: bold;" class="mt-1">
+        <div style="margin-top: 100px;" class="d-flex justify-content-center">
+            <div class="text-center d-flex flex-column">
+                <div style="font-weight: bold;" class="mt-1">“{{data.company_name}}” MMC və “JLTECH” MMC</div>
+                <div style="font-weight: bold;" class="mt-1">arasında bağlanmış {{data.con_name}} saylı
+                    {{data.con_date}} il tarixli müqavilənin</div>
+                <div style="font-weight: bold;" class="mt-1">
                     {% if data.additional %}
-                        {{data.additional}}
+                    {{data.additional}}
                     {% endif %}
                     əsasında
-                    
-                    </span>
-                <span style="font-weight: bold;" class="mt-1">Görülən işlər və xidmətlər üzrə</span>
-                <span style="font-weight: bold;" class="mt-1">Təhvil-Təslim AKTI</span>
+
+                </div>
+                <div style="font-weight: bold;" class="mt-1">Görülən işlər və xidmətlər üzrə</div>
+                <div style="font-weight: bold;" class="mt-1">Təhvil-Təslim AKTI</div>
                 {% if data.additional %}
-                <span style="font-weight: bold;" class="mt-4">{{data.po}}</span>
-                        
+                <div style="font-weight: bold;" class="mt-4">{{data.po}}</div>
+
                 {% endif %}
-                
-            </p>
+
+            </div>
         </div>
         <div class="d-flex justify-content-between">
-            <span style="font-weight: bold;" class="city">
+            <div style="font-weight: bold;" class="city">
                 Baki şəhəri
-            </span>
-            <span style="font-weight: bold;" class="date">
+            </div>
+            <div style="font-weight: bold;" class="date">
                 {{data.date}}
-            </span>
+            </div>
         </div>
         <div class="text d-flex flex-column text-left mt-4">
             <span style="margin-left: 25px;">Biz, imza edənlər, “{{data.company_name}}” MMC tərəfindən (“Sifarişcisi”)
-                {{data.drc_name}} və “JLTECH” MMC </span>
+                {{data.position}}u {{data.drc_name}} və “JLTECH” MMC </span>
             <span>tərəfindən (“İcracı”) Direktor Abdulla Isayev, bu aktı tərtib etdilər ki, həqiqətən aşağıda göstərilən
                 xidmətlər (işlər) yerinə yetirilib:</span>
         </div>
         <table class="mt-5 main_tb">
-            <tr style="height: 25px;">
+            <tr style="height: 25px; background-color: #86cbeb;">
                 <th style="width: 15px;">N</th>
-                <th style="text-align: center;">Xidmətin (lisensizaynin) adi</th>
-                <th style="width: 25px; text-align: center ;">Sayi</th>
-                <th style="width: 25px; text-align: center ;">Ölçü vahidi</th>
-                <th style="width: 25px; text-align: center ;">Bir vahidinin dəyəri</th>
-                <th style="width: 25px; text-align: center ;">Ümumi dəyəri</th>
+                <th style="width: 60%; text-align: center;">Xidmətin (lisensizaynin) adi</th>
+                <th style="text-align: center ;">Sayi</th>
+                <th style="text-align: center ;">Ölçü vahidi</th>
+                <th style="text-align: center ;">
+                    Bir vahidinin
+                    {% if data.currency == 'usd' %}
+                        (ABŞ dolları)
+                    {% else  %}
+                        (Manat)
+                    {% endif %}
+                </th>
+                <th style="text-align: center ;">
+                    Ümumi dəyəri
+                    {% if data.currency == 'usd' %}
+                        (ABŞ dolları)
+                    {% else  %}
+                        (Manat)
+                    {% endif %}
+                </th>
             </tr>
 
             {% for desc in data.descs %}
@@ -332,8 +368,8 @@ def get_tta_html_string():
                 <td style="text-align: left;">{{desc.service}}</td>
                 <td style="text-align: center;">{{desc.qty}}</td>
                 <td style="text-align: center;">{{desc.unit_of_meas}}</td>
-                <td style="text-align: right;">{{desc.price_one}}</td>
-                <td style="text-align: right;">{{desc.total_price}}</td>
+                <td style="text-align: right;">{{data.cur_icon}}{{desc.price_one}}</td>
+                <td style="text-align: right;">{{data.cur_icon}}{{desc.total_price}}</td>
             </tr>
             {% endfor %}
         </table>
@@ -341,46 +377,46 @@ def get_tta_html_string():
             <tr style="height: 25px; background-color: white;">
                 <th style="width: 28px;"></th>
                 <th style="text-align: right;">Cəmi</th>
-                <th style="width: 70px; text-align: right ;">10000</th>
+                <th style="width: 70px; text-align: right ;">{{data.cur_icon}}{{data.final}}</th>
             </tr>
             <tr style="height: 25px; background-color: white;">
                 <th style="width: 29px;"></th>
                 <th style="text-align: right;">Əlavə dəyər vergisi(18%):</th>
-                <th style="width: 70px; text-align: right ;">10000</th>
+                <th style="width: 70px; text-align: right ;">{{data.cur_icon}}{{data.vat}}</th>
             </tr>
             <tr style="height: 25px; background-color: white;">
                 <th style="width: 29px;"></th>
                 <th style="text-align: right;">ÜMUMI MƏBLƏG</th>
-                <th style="width: 70px; text-align: right ;">10000</th>
+                <th style="width: 71px; text-align: right ;">{{data.cur_icon}}{{data.total}}</th>
             </tr>
         </table>
 
         <div class="header d-flex justify-content-between w-100 mt-5">
             <div class="d-flex flex-column">
-                <span style="font-weight: bold;">
+                <div style="font-weight: bold;">
                     Təhvil aldi:
 
-                </span>
-                <span style="font-weight: bold;" class="mt-2">
+                </div>
+                <div style="font-weight: bold;" class="mt-2">
                     "{{data.company_name}}" MMC
-                </span>
-                <span class="mt-5">
+                </div>
+                <div class="mt-5">
                     _____________________ (imza)
-                </span>
-                
+                </div>
+
             </div>
             <div class="d-flex flex-column">
-                <span style="font-weight: bold;">
+                <div style="font-weight: bold;">
                     Təsdiq edirəm:
 
-                </span>
-                <span class="mt-2" style="font-weight: bold;">
+                </div>
+                <div class="mt-2" style="font-weight: bold;">
                     "JLTECH" MMC
-                </span>
-                <span class="mt-5">
+                </div>
+                <div class="mt-5">
                     ____________________(imza)
-                </span>
-                
+                </div>
+
             </div>
         </div>
     </div>
@@ -390,27 +426,28 @@ def get_tta_html_string():
 </html>
   """
 
-def date_covnerting_to_human(date):
-  months = {
-    "01": "Yanvar",
-    "02": "Fevral",
-    "03": "Mart",
-    "04": "Aprel",
-    "05": "May",
-    "06": "İyun",
-    "07": "İyul",
-    "08": "Avqust",
-    "09": "Sentyabr",
-    "10": "Oktyabr",
-    "11": "Noyabr",
-    "12": "Dekabr"
-  }
-  date = date.split("-")
-  month = months[date[1]]
-  day = date[2]
-  if day[0] == '0':
-    day = day.replace("0", "")
-  year = date[0]
-  converted = f"{day} {month} {year}"
 
-  return converted
+def date_covnerting_to_human(date):
+    months = {
+        "01": "Yanvar",
+        "02": "Fevral",
+        "03": "Mart",
+        "04": "Aprel",
+        "05": "May",
+        "06": "İyun",
+        "07": "İyul",
+        "08": "Avqust",
+        "09": "Sentyabr",
+        "10": "Oktyabr",
+        "11": "Noyabr",
+        "12": "Dekabr",
+    }
+    date = date.split("-")
+    month = months[date[1]]
+    day = date[2]
+    if day[0] == "0":
+        day = day.replace("0", "")
+    year = date[0]
+    converted = f"{day} {month} {year}"
+
+    return converted

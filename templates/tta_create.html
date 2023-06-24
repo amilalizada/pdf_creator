@@ -91,10 +91,16 @@
             </div>
             <div class="col-4>
         <label for=" currency">Currency:</label>
-                <input type="text" id="currency" placeholder="Enter currency">
+                <select name="" id="currency">
+                    <option value="usd">usd</option>
+                    <option value="azn">azn</option>
+                </select>
 
                 <label for="date">Date of TTA creation:</label>
                 <input type="date" id="date">
+
+                <label for="position">Position name:</label>
+                <input type="text" id="position">
             </div>
             <div class="col-4>
         <label for=" add">Contract addition (optional):</label>
@@ -145,10 +151,12 @@
         function createPdf() {
             const contracts = document.getElementById('contractSelect');
             var date = document.getElementById("date").value
-            var curr = document.getElementById("currency").value
+            var currSelect = document.getElementById("currency")
+            var currOpt = currSelect.options[currSelect.selectedIndex].value
             var drc_name = document.getElementById("name").value
             const companies = document.getElementById('companySelect');
             var comp_option = companies.options[companies.selectedIndex].value;
+            var position = document.getElementById("position").value;
             // var proj_option = projects_select.options[projects_select.selectedIndex].value;
             var additional = document.getElementById("additional").value
             if (additional == '') {
@@ -184,10 +192,11 @@
                 date: date,
                 comp_id: comp_id,
                 drc_name: drc_name,
-                currency: curr,
+                currency: currOpt,
                 additional: additional,
                 descs: inpArr,
-                po: po
+                po: po,
+                position: position
             };
             console.log(body);
 

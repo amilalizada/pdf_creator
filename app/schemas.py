@@ -81,6 +81,7 @@ class TTADocInputSchema(BaseModel):
     descs: List 
     additional: str = None
     po: str = None
+    position: str
 
     class Config:
         orm_mode = True
