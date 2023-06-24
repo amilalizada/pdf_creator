@@ -33,8 +33,10 @@
     <h1>Welcome!</h1>
     <button onclick="goToAdmin()" class="button">Admin</button>
     <button onclick="goToInvoice()" class="button">Create Invoice</button>
-    <button class="button">Create TTH</button>
+    <button onclick="createTta()" class="button">Create TTH</button>
     <button onclick="goToInvoiceList()" class="button">Invoice PDF List</button>
+    <!-- <button onclick="goToInvoiceList()" class="button">Invoice PDF List</button> -->
+
   </div>
 
 
@@ -47,6 +49,9 @@
       }
       function goToInvoiceList() {
         window.location.replace(`http://0.0.0.0:8081/api/pdf/invoice-list`);
+      }
+      function createTta() {
+        window.location.replace(`http://0.0.0.0:8081/api/pdf/tta-create`);
       }
 
   </script>

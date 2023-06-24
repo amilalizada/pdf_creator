@@ -1,5 +1,5 @@
 import hashlib
-from posixpath import abspath
+from posixpath import abspath, sep
 import time
 import os
 import json
@@ -7,6 +7,7 @@ import pdfkit
 from fastapi import Request, File, UploadFile
 from fastapi.param_functions import Depends, File
 from fastapi.routing import APIRouter
+from peewee import Ordering
 from starlette import status
 from fastapi.responses import (
     JSONResponse,
@@ -17,9 +18,9 @@ from fastapi.responses import (
 )
 from fastapi.templating import Jinja2Templates
 from app.schemas import *
-from app.models import Project, User, Company, PdfData
+from app.models import Project, User, Company, PdfData, Contract, TTAData
 from jinja2 import Environment, FileSystemLoader, Template
-from app.utils import convert_to_pdf, get_html_string, get_image_file_as_base64_data
+from app.utils import convert_to_pdf, get_html_string, get_image_file_as_base64_data, get_tta_html_string, date_covnerting_to_human
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from fastapi_mail import FastMail, MessageSchema, MessageType
@@ -254,6 +255,14 @@ def list_comps(request: Request):
     return companies
 
 
+@router.get("/contract-list/{comp_id}")
+def list_contracts(comp_id: int, request: Request):
+
+    contracts = list(Contract.select().where(Contract.comp_id == comp_id).dicts())
+
+    return contracts
+
+
 @router.post("/send-email")
 async def send_mail(data: SendMailInput, request: Request):
     company = list(Company.select(Company.email).where(Company.id == data.comp_id))[0]
@@ -300,3 +309,90 @@ async def navig(request: Request):
     return templates.TemplateResponse(
         "inv_list.html", {"request": request, "docs": response_list}
     )
+
+
+@router.get("/tta-preview/{c_id}")
+async def prew_tta(c_id: int, request: Request):
+    contract_doc_data = list(TTAData.select().where(TTAData.id == c_id).dicts())[0]
+    company = list(Company.select().where(Company.id == contract_doc_data["comp_id"]).dicts())[0]
+    contract = list(Contract.select().where(Contract.id == contract_doc_data["contract_id"]).dicts())[0]
+    data = json.loads(contract_doc_data["data"])
+    converted_date = date_covnerting_to_human(contract["date"])
+    contract_doc_data["create_date"] = contract_doc_data["create_date"].replace("-", ".")
+    doc_data = {
+        "company_name": company["name"],
+        "drc_name": contract_doc_data["name"],
+        "date": contract_doc_data["create_date"],
+        "con_date": converted_date,
+        "con_name": contract["name"],
+        "additional": data["additional"],
+        "po": data["po"],
+        "descs": data["desc"],
+    }
+    options = {
+        "page-size": "A4",
+        "margin-top": "20mm",
+        "margin-right": "0mm",
+        "margin-bottom": "0mm",
+        "margin-left": "0mm",
+        "zoom": "1.0mm"
+    }
+    # print(data)
+    html_string = get_tta_html_string()
+    html_template = Template(html_string)
+    rendered_html = html_template.render(data=doc_data)
+    wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
+
+    await convert_to_pdf(rendered_html, f"tta{c_id}.pdf", options=options, config_path=wkhtmltopdf_path)
+
+    return templates.TemplateResponse(
+        "tta.html", {"request": request, "data": doc_data}
+    )
+
+
+@router.get("/tta-create")
+async def tta_get(request: Request):
+
+    companies = Company.select()
+    
+    return templates.TemplateResponse(
+        "tta_create.html", {"request": request, "companies": companies}
+    )
+
+
+@router.post("/tta-create")
+async def tta_post(data: TTAInputSchema, reuqest: Request):
+
+    contract = Contract.create(
+        name=data.name.strip(),
+        comp_id=data.comp_id,
+        date=data.date,
+        currency=data.currency,
+        created_at=int(time.time())
+    )
+
+    return {"status": "ok"}
+
+
+@router.post("/tta-doc")
+async def tta_doc_post(data: TTADocInputSchema, reuqest: Request):
+
+    obj = {
+        "currency": data.currency,
+        "desc": data.descs,
+        "additional": data.additional,
+        "po": data.po
+    }
+
+    tta_doc = TTAData.create(
+        name=data.drc_name.strip(),
+        comp_id=data.comp_id,
+        contract_id=int(data.contract_id),
+        date=data.date,
+        data=json.dumps(obj, separators=(",", ":")),
+        create_date=data.date
+    )
+
+    return {"id": tta_doc.id}
+
+

@@ -52,10 +52,8 @@ def get_html_string():
 
   td,
   th {
-    /* border: 1px solid #dddddd; */
     text-align: left;
     padding: 6px;
-    /* padding-left: 35px; */
     text-align: right;
 
   }
@@ -207,3 +205,212 @@ def get_html_string():
 </html>
     
     """
+
+
+def get_tta_html_string():
+  return """
+    <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .main_tb.th {
+            background-color: #86cbeb;
+            color: black;
+            /* padding: 10px; */
+            font-size: 1.2em;
+        }
+
+        th,
+        td {
+            color: black;
+            border: 1px solid black;
+            padding: 8px;
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="width: 60%; margin: auto;;" class="my_container mt-5 mb-5 p-0">
+        <div class="header d-flex justify-content-between w-100">
+            <div class="d-flex flex-column">
+                <span style="font-weight: bold;">
+                    Təsdiq edirəm:
+
+                </span>
+                <span style="font-weight: bold;">
+                    "{{data.company_name}}" MMC
+                </span style="font-weight: bold;">
+                <span style="font-weight: bold;">
+                    Department direktoru:
+                </span>
+                <span class="mt-3" style="font-weight: bold;">
+                    {{data.drc_name}}
+                </span>
+            </div>
+            <div class="d-flex flex-column">
+                <span style="font-weight: bold;">
+                    Təsdiq edirəm:
+
+                </span>
+                <span style="font-weight: bold;">
+                    "JLTECH" LLC
+                </span>
+                <span style="font-weight: bold;">
+                    direktor:
+                </span>
+                <span class="mt-3" style="font-weight: bold;">
+                    Abdulla İsayev
+                </span>
+            </div>
+        </div>
+        <div style="margin-top: 100px;" class="center d-flex justify-content-center">
+            <p class="text-center d-flex flex-column">
+                <span style="font-weight: bold;" class="mt-1">“{{data.company_name}}” MMC və “JLTECH” MMC</span>
+                <span style="font-weight: bold;" class="mt-1">arasında bağlanmış {{data.con_name}} saylı {{data.con_date}} il tarixli müqavilənin</span>
+                <span style="font-weight: bold;" class="mt-1">
+                    {% if data.additional %}
+                        {{data.additional}}
+                    {% endif %}
+                    əsasında
+                    
+                    </span>
+                <span style="font-weight: bold;" class="mt-1">Görülən işlər və xidmətlər üzrə</span>
+                <span style="font-weight: bold;" class="mt-1">Təhvil-Təslim AKTI</span>
+                {% if data.additional %}
+                <span style="font-weight: bold;" class="mt-4">{{data.po}}</span>
+                        
+                {% endif %}
+                
+            </p>
+        </div>
+        <div class="d-flex justify-content-between">
+            <span style="font-weight: bold;" class="city">
+                Baki şəhəri
+            </span>
+            <span style="font-weight: bold;" class="date">
+                {{data.date}}
+            </span>
+        </div>
+        <div class="text d-flex flex-column text-left mt-4">
+            <span style="margin-left: 25px;">Biz, imza edənlər, “{{data.company_name}}” MMC tərəfindən (“Sifarişcisi”)
+                {{data.drc_name}} və “JLTECH” MMC </span>
+            <span>tərəfindən (“İcracı”) Direktor Abdulla Isayev, bu aktı tərtib etdilər ki, həqiqətən aşağıda göstərilən
+                xidmətlər (işlər) yerinə yetirilib:</span>
+        </div>
+        <table class="mt-5 main_tb">
+            <tr style="height: 25px;">
+                <th style="width: 15px;">N</th>
+                <th style="text-align: center;">Xidmətin (lisensizaynin) adi</th>
+                <th style="width: 25px; text-align: center ;">Sayi</th>
+                <th style="width: 25px; text-align: center ;">Ölçü vahidi</th>
+                <th style="width: 25px; text-align: center ;">Bir vahidinin dəyəri</th>
+                <th style="width: 25px; text-align: center ;">Ümumi dəyəri</th>
+            </tr>
+
+            {% for desc in data.descs %}
+            <tr>
+                <td style="text-align: center;">{{loop.index}}</td>
+                <td style="text-align: left;">{{desc.service}}</td>
+                <td style="text-align: center;">{{desc.qty}}</td>
+                <td style="text-align: center;">{{desc.unit_of_meas}}</td>
+                <td style="text-align: right;">{{desc.price_one}}</td>
+                <td style="text-align: right;">{{desc.total_price}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <table style="border-top: hidden;">
+            <tr style="height: 25px; background-color: white;">
+                <th style="width: 28px;"></th>
+                <th style="text-align: right;">Cəmi</th>
+                <th style="width: 70px; text-align: right ;">10000</th>
+            </tr>
+            <tr style="height: 25px; background-color: white;">
+                <th style="width: 29px;"></th>
+                <th style="text-align: right;">Əlavə dəyər vergisi(18%):</th>
+                <th style="width: 70px; text-align: right ;">10000</th>
+            </tr>
+            <tr style="height: 25px; background-color: white;">
+                <th style="width: 29px;"></th>
+                <th style="text-align: right;">ÜMUMI MƏBLƏG</th>
+                <th style="width: 70px; text-align: right ;">10000</th>
+            </tr>
+        </table>
+
+        <div class="header d-flex justify-content-between w-100 mt-5">
+            <div class="d-flex flex-column">
+                <span style="font-weight: bold;">
+                    Təhvil aldi:
+
+                </span>
+                <span style="font-weight: bold;" class="mt-2">
+                    "{{data.company_name}}" MMC
+                </span>
+                <span class="mt-5">
+                    _____________________ (imza)
+                </span>
+                
+            </div>
+            <div class="d-flex flex-column">
+                <span style="font-weight: bold;">
+                    Təsdiq edirəm:
+
+                </span>
+                <span class="mt-2" style="font-weight: bold;">
+                    "JLTECH" MMC
+                </span>
+                <span class="mt-5">
+                    ____________________(imza)
+                </span>
+                
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+  """
+
+def date_covnerting_to_human(date):
+  months = {
+    "01": "Yanvar",
+    "02": "Fevral",
+    "03": "Mart",
+    "04": "Aprel",
+    "05": "May",
+    "06": "İyun",
+    "07": "İyul",
+    "08": "Avqust",
+    "09": "Sentyabr",
+    "10": "Oktyabr",
+    "11": "Noyabr",
+    "12": "Dekabr"
+  }
+  date = date.split("-")
+  month = months[date[1]]
+  day = date[2]
+  if day[0] == '0':
+    day = day.replace("0", "")
+  year = date[0]
+  converted = f"{day} {month} {year}"
+
+  return converted

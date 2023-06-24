@@ -1,12 +1,304 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #myTable th,
+        #myTable td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            /* Add a bottom border to each cell */
+        }
+
+        #myTable th {
+            background-color: #f2f2f2;
+        }
+
+        .form-container {
+            max-width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+        }
+
+        .form-container label,
+        .form-container input,
+        .form-container select {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .form-container select {
+            width: 100%;
+            height: 30px;
+        }
+
+        .form-container input[type="text"],
+        .form-container input[type="date"] {
+            width: 100%;
+            height: 30px;
+            padding: 5px;
+        }
+
+        input[type="button"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-left: 190px;
+        }
+
+        .form-container input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
+
 <body>
-    
+    <div class="form-container mt-5">
+        <form class="d-flex justify-content-around">
+            <div class="col-4">
+                <select id="companySelect" name="companySelect">
+                    <option value="0">Select</option>
+
+                    {% for comp in companies %}
+                    <option value="{{comp.id}}">{{comp.name}}</option>
+                    {% endfor %}
+                    <!-- Add more options dynamically based on available companies -->
+                </select>
+                <label for="contract">Contract:</label>
+                <select id="contractSelect">
+                    <option value="0">Select</option>
+                    {% for con in contracts %}
+                    <option value="{{comp.id}}">{{con.name}}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="name">Name of director or smth:</label>
+                <input type="text" id="name" placeholder="Enter your name">
+            </div>
+            <div class="col-4>
+        <label for=" currency">Currency:</label>
+                <input type="text" id="currency" placeholder="Enter currency">
+
+                <label for="date">Date of TTA creation:</label>
+                <input type="date" id="date">
+            </div>
+            <div class="col-4>
+        <label for=" add">Contract addition (optional):</label>
+                <input type="text" id="additional">
+                <label for="po">PO (optional):</label>
+                <input type="text" id="po">
+            </div>
+
+
+
+        </form>
+
+    </div>
+    <section class="mt-5" style="width: 80%; margin: auto;">
+        <table id="myTable" style="margin: auto; width: 100%;">
+            <thead>
+                <tr>
+                    <th style="width: 675px;">Xidmetin(lisenziyanin) adi</th>
+                    <th>Sayi</th>
+                    <th>Olcu vahidi Price</th>
+                    <th>Bir vahidin deyeri</th>
+                    <!-- <th>Umumi deyeri</th> -->
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="desc">
+                    <td id="service"><input style="width: 100%;" type="text"></td>
+                    <td id="quantity"><input style="width: 90%;" type="number"></td>
+                    <td id="unit_of_measurement"><input style="width: 90%;" type="text"></td>
+                    <td id="price_of_one"><input style="width: 90%;" type="number"></td>
+                    <!-- <td id="total_price"><input style="width: 90%;" type="number"></td> -->
+
+                    <td><span class="delete-icon">&#128465;</span></td>
+                </tr>
+                <!-- Add more rows as needed -->
+            </tbody>
+        </table>
+
+        <button class="mt-5 mb-5" style="background-color: #4CAF50;
+    color: white;
+    cursor: pointer; border-radius: 5px; border: 1px" onclick="addRow()" type="button">Add Row</button>
+    </section>
+
+    <input onclick="createPdf()" type="button" value="Submit">
+
+    <script>
+        function createPdf() {
+            const contracts = document.getElementById('contractSelect');
+            var date = document.getElementById("date").value
+            var curr = document.getElementById("currency").value
+            var drc_name = document.getElementById("name").value
+            const companies = document.getElementById('companySelect');
+            var comp_option = companies.options[companies.selectedIndex].value;
+            // var proj_option = projects_select.options[projects_select.selectedIndex].value;
+            var additional = document.getElementById("additional").value
+            if (additional == '') {
+                additional = null
+            }
+            var po = document.getElementById("po").value
+            if (po == '') {
+                po = null
+            }
+            var contract_option = companies.options[contracts.selectedIndex].value;
+            var descs = document.querySelectorAll(".desc")
+
+            var inpArr = []
+            descs.forEach((div) => {
+                var service = div.querySelector("#service input").value;
+                var qty = div.querySelector("#quantity input").value
+                var unitOfmeas = div.querySelector("#unit_of_measurement input").value
+                var priceOfOne = div.querySelector("#price_of_one input").value
+                // var totalPrice = div.querySelector("#total_price input").value
+
+                inpArr.push({
+                    "service": service,
+                    "qty": qty,
+                    "unit_of_meas": unitOfmeas,
+                    "price_one": priceOfOne,
+                    "total_price": qty * priceOfOne
+                })
+            })
+            console.log(typeof(inpArr));
+            var body = {
+                // comp_id: comp_option,
+                contract_id: contract_option,
+                date: date,
+                comp_id: comp_id,
+                drc_name: drc_name,
+                currency: curr,
+                additional: additional,
+                descs: inpArr,
+                po: po
+            };
+            console.log(body);
+
+            fetch("http://0.0.0.0:8081/api/pdf/tta-doc", {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("User created successfully:", data);
+                    window.location.replace(`http://0.0.0.0:8081/api/pdf/tta-preview/${data["id"]}`)
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+
+        }
+
+        function addRow() {
+            var table = document.getElementById("myTable");
+            var tbody = table.getElementsByTagName("tbody")[0];
+            var newRow = document.createElement("tr");
+            newRow.className = "desc"
+            var descriptionCell = document.createElement("td");
+            descriptionCell.id = "service"
+            var descriptionInput = document.createElement("input");
+            descriptionInput.type = "text";
+            descriptionInput.style = "width: 100%;";
+            descriptionCell.appendChild(descriptionInput);
+            newRow.appendChild(descriptionCell);
+
+            var quantityCell = document.createElement("td");
+            quantityCell.id = "quantity"
+            var quantityInput = document.createElement("input");
+            quantityInput.type = "number";
+            quantityInput.style = "width: 90%;"
+            quantityCell.appendChild(quantityInput);
+            newRow.appendChild(quantityCell);
+
+            var unitPriceCell = document.createElement("td");
+            unitPriceCell.id = "unit_of_measurement"
+            var unitPriceInput = document.createElement("input");
+            unitPriceInput.type = "text";
+            unitPriceInput.style = "width: 90%;";
+            unitPriceCell.appendChild(unitPriceInput);
+            newRow.appendChild(unitPriceCell);
+
+
+            var priceOneCell = document.createElement("td");
+            priceOneCell.id = "price_of_one"
+            var priceOneCellInput = document.createElement("input");
+            priceOneCellInput.type = "number";
+            priceOneCellInput.style = "width: 90%;";
+            priceOneCell.appendChild(priceOneCellInput);
+            newRow.appendChild(priceOneCell);
+
+            // var totalCell = document.createElement("td");
+            // totalCell.id = "price_of_one"
+            // var totalCellInput = document.createElement("input");
+            // totalCellInput.type = "number";
+            // totalCellInput.style = "width: 90%;";
+            // totalCell.appendChild(totalCellInput);
+            // newRow.appendChild(totalCell);
+
+            var actionsCell = document.createElement("td");
+            var deleteIcon = document.createElement("span");
+            deleteIcon.className = "delete-icon";
+            deleteIcon.innerHTML = "&#128465;";
+            deleteIcon.addEventListener("click", function () {
+                tbody.removeChild(newRow);
+            });
+            actionsCell.appendChild(deleteIcon);
+            newRow.appendChild(actionsCell);
+
+            tbody.appendChild(newRow);
+        }
+        const contract_select = document.getElementById('contractSelect');
+        var companies = document.getElementById("companySelect")
+        companies.addEventListener("change", e => {
+
+            contract_select.innerHTML = ''
+            contract_select.innerHTML = '<option class="project" value="">Contracts</option>'
+            let option = e.target;
+            comp_id = option.value
+            console.log(comp_id, "EY");
+            fetch(`http://0.0.0.0:8081/api/pdf/contract-list/${comp_id}`, {
+                    method: 'GET',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    console.log(responseJson);
+                    responseJson.forEach(element => {
+                        console.log(element.name);
+                        contract_select.innerHTML +=
+                            `<option class="contract-opt" value="${element.id}">${element.name}</option>`
+
+                    });
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        });
+    </script>
 </body>
+
 </html>

@@ -58,3 +58,28 @@ class PdfData(BaseModel):
 
     class Meta:
         table_name = "pdf_data"
+
+
+class Contract(BaseModel):
+    id = AutoField()
+    name = TextField()
+    comp_id = ForeignKeyField(column_name='comp_id', field='id', model=Company, null=True)
+    date = CharField()
+    currency = CharField()
+    created_at = BigIntegerField()
+
+    class Meta:
+        table_name = "contracts"
+
+
+class TTAData(BaseModel):
+    id = AutoField()
+    name = TextField()
+    data = TextField()
+    comp_id = ForeignKeyField(column_name='comp_id', field='id', model=Company, null=True)
+    contract_id = ForeignKeyField(column_name='contract_id', field='id', model=Contract, null=True)
+    create_date = CharField()
+
+    class Meta:
+        table_name = "tta_data"
+

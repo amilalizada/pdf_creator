@@ -63,3 +63,25 @@ class ConvertInvoiceInputSchema(BaseModel):
 class SendMailInput(BaseModel):
     inv_id: str
     comp_id: str
+
+
+class TTAInputSchema(BaseModel):
+    name: str
+    comp_id: int
+    date: str
+    currency: str
+
+
+class TTADocInputSchema(BaseModel):
+    contract_id: str
+    comp_id: str
+    drc_name: str
+    currency: str
+    date: str
+    descs: List 
+    additional: str = None
+    po: str = None
+
+    class Config:
+        orm_mode = True
+        getter_dict = PeeweeGetterDict 
