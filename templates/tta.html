@@ -33,20 +33,44 @@
             padding: 8px;
             text-align: right;
         }
+       
+    
+    .container {
+      text-align: center;
+    }
+    
+    .button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
     </style>
 </head>
 
 <body>
+    <div class="container">
+        <button onclick="goToAdmin()" class="button">Admin</button>
+        <button onclick="goToInvoice()" class="button">Create Invoice</button>
+        <button onclick="createTta()" class="button">Create TTH</button>
+        <button onclick="goToInvoiceList()" class="button">Invoice PDF List</button>
+        <!-- <button onclick="goToInvoiceList()" class="button">Invoice PDF List</button> -->
+
+    </div>
     <div style="width: 70%; margin: auto;" class="my_container mt-5 mb-5 p-0">
         <div class="header d-flex justify-content-between w-100">
             <div class="d-flex flex-column">
-                <div class="mt-2"  style="font-weight: bold;">
+                <div class="mt-2" style="font-weight: bold;">
                     Təsdiq edirəm:
                 </div>
                 <!-- <div class="mt-2"  style="font-weight: bold;">
                     "{{data.company_name}}" MMC
                 </div style="font-weight: bold;"> -->
-                <div class="mt-2"  style="font-weight: bold;">
+                <div class="mt-2" style="font-weight: bold;">
                     {{data.position}}u:
                 </div>
                 <div class="mt-3" style="font-weight: bold;">
@@ -54,13 +78,13 @@
                 </div>
             </div>
             <div class="d-flex flex-column">
-                <div class="mt-2"  style="font-weight: bold;">
+                <div class="mt-2" style="font-weight: bold;">
                     Təsdiq edirəm:
                 </div>
                 <!-- <div class="mt-2"  style="font-weight: bold;">
                     "JLTECH" LLC
                 </div> -->
-                <div class="mt-2"  style="font-weight: bold;">
+                <div class="mt-2" style="font-weight: bold;">
                     direktor:
                 </div>
                 <div class="mt-3" style="font-weight: bold;">
@@ -112,17 +136,17 @@
                 <th style="text-align: center ;">
                     Bir vahidinin
                     {% if data.currency == 'usd' %}
-                        (ABŞ dolları)
+                    (ABŞ dolları)
                     {% else  %}
-                        (Manat)
+                    (Manat)
                     {% endif %}
                 </th>
                 <th style="text-align: center ;">
                     Ümumi dəyəri
                     {% if data.currency == 'usd' %}
-                        (ABŞ dolları)
+                    (ABŞ dolları)
                     {% else  %}
-                        (Manat)
+                    (Manat)
                     {% endif %}
                 </th>
             </tr>
@@ -185,76 +209,108 @@
             </div>
         </div>
     </div>
-
+    <input id="tta_id" type="hidden" value="{{data.id}}">
 
     <button onclick="donwload()" type="button">Download Created PDF</button>
-    <button onclick="sendEmail()" type="button">Send file to selected company email</button>
+    <button onclick="openMailApp()">Open Mail App</button>
 
     <script>
         function donwload() {
-          const inv_id = document.getElementById('invoice_id').innerText;
-          var inpArr = []
-  
-          fetch(`http://0.0.0.0:8081/api/pdf/download/${inv_id}`, {
-              method: 'GET',
-              headers: {
-                // Accept: 'application/pdf',
-                'Content-Type': 'application/pdf'
-              },
-            })
-            .then(response => response.blob())
-            .then(blob => {
-              const pdfUrl = URL.createObjectURL(blob);
-  
-              // Create an anchor element
-              const link = document.createElement('a');
-              link.href = pdfUrl;
-              link.download = 'invoice.pdf'; // Specify the desired filename
-  
-              // Simulate a click event to trigger the download
-              link.dispatchEvent(new MouseEvent('click'));
-  
-              // Clean up the URL object
-              URL.revokeObjectURL(pdfUrl);
-            })
-            .catch(error => {
-              console.error("Error:", error);
-            });
+            const id = document.getElementById('tta_id').value;
+            var inpArr = []
+
+            fetch(`http://0.0.0.0:8081/api/pdf/download-tta/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        // Accept: 'application/pdf',
+                        'Content-Type': 'application/pdf'
+                    },
+                })
+                .then(response => response.blob())
+                .then(blob => {
+                    const pdfUrl = URL.createObjectURL(blob);
+
+                    // Create an anchor element
+                    const link = document.createElement('a');
+                    link.href = pdfUrl;
+                    link.download = 'tta.pdf'; // Specify the desired filename
+
+                    // Simulate a click event to trigger the download
+                    link.dispatchEvent(new MouseEvent('click'));
+
+                    // Clean up the URL object
+                    URL.revokeObjectURL(pdfUrl);
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
         }
-  
+
         function sendEmail() {
-          const inv_id = document.getElementById('invoice_id').innerText;
-          const comp_id = document.getElementById('hidden').value;
-          console.log(document.getElementById('hidden'));
-        
-  
-          body = {
-            "inv_id": inv_id,
-            comp_id: comp_id
-          }
-          fetch("http://0.0.0.0:8081/api/pdf/send-email", {
-                      method: 'POST',
-                      headers: {
-                          Accept: 'application/json',
-                          'Content-Type': 'application/json'
-                      },
-                      body: JSON.stringify(body)
-                  })
-                  .then(response => response.json())
-                  .then(data => {
-                      console.log("Email sent:", data);
+            const inv_id = document.getElementById('invoice_id').innerText;
+            const comp_id = document.getElementById('hidden').value;
+            console.log(document.getElementById('hidden'));
+
+
+            body = {
+                "inv_id": inv_id,
+                comp_id: comp_id
+            }
+            fetch("http://0.0.0.0:8081/api/pdf/send-email", {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Email sent:", data);
                     alert("Email successfully sent")
                     window.location.replace(`http://0.0.0.0:8081/api/pdf/navigation`);
-  
-                      // window.location.replace(`http://0.0.0.0:8081/api/pdf/preview/${data["id"]}`);
-                  })
-                  .catch(error => {
+
+                    // window.location.replace(`http://0.0.0.0:8081/api/pdf/preview/${data["id"]}`);
+                })
+                .catch(error => {
                     window.location.replace(`http://0.0.0.0:8081/api/pdf/navigation`);
-  
+
                     console.error("Error:", error);
-                  });
+                });
         }
-      </script>
+
+        function goToInvoice() {
+            window.location.replace(`http://0.0.0.0:8081/api/pdf/create-doc`);
+        }
+
+        function goToAdmin() {
+            window.location.replace(`http://0.0.0.0:8081/api/pdf/admin`);
+        }
+
+        function goToInvoiceList() {
+            window.location.replace(`http://0.0.0.0:8081/api/pdf/invoice-list`);
+        }
+
+        function createTta() {
+            window.location.replace(`http://0.0.0.0:8081/api/pdf/tta-create`);
+        }
+
+        function openMailApp() {
+            fetch(`http://0.0.0.0:8081/api/pdf/open-mail`, {
+                    method: 'GET',
+                    headers: {
+                        // Accept: 'application/pdf',
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then(response => response.json())
+                .then(response => {
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+        }
+    </script>
 </body>
 
 </html>

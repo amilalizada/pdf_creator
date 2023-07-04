@@ -46,9 +46,30 @@
   tr:nth-child(even) {
     background-color: #dddddd;
   }
+
+  .ccontainer {
+    text-align: center;
+  }
+    
+    .button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
 </style>
 
 <body>
+  <div class="ccontainer">
+    <button onclick="goToAdmin()" class="button">Admin</button>
+    <button onclick="goToInvoice()" class="button">Create Invoice</button>
+    <button onclick="createTta()" class="button">Create TTH</button>
+    <button onclick="goToInvoiceList()" class="button">Invoice PDF List</button>
+</div>
   <input id="hidden" value="{{data.comp_id}}" type="hidden">
   <div style="height: 8px; width: 60%; margin: auto;
     background-color: #283592" class="horizontal-line"></div>

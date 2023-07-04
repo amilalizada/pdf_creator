@@ -1,8 +1,5 @@
 import pdfkit
 import base64
-from ssl import create_default_context
-from email.mime.text import MIMEText
-from smtplib import SMTP
 from pdf2docx import Converter
 from html2docx import html2docx
 def aa():
@@ -377,17 +374,17 @@ def get_tta_html_string():
             <tr style="height: 25px; background-color: white;">
                 <th style="width: 28px;"></th>
                 <th style="text-align: right;">Cəmi</th>
-                <th style="width: 70px; text-align: right ;">{{data.cur_icon}}{{data.final}}</th>
+                <th style="width: 75px; text-align: right ;">{{data.cur_icon}}{{data.final}}</th>
             </tr>
             <tr style="height: 25px; background-color: white;">
                 <th style="width: 29px;"></th>
                 <th style="text-align: right;">Əlavə dəyər vergisi(18%):</th>
-                <th style="width: 70px; text-align: right ;">{{data.cur_icon}}{{data.vat}}</th>
+                <th style="width: 75px; text-align: right ;">{{data.cur_icon}}{{data.vat}}</th>
             </tr>
             <tr style="height: 25px; background-color: white;">
                 <th style="width: 29px;"></th>
                 <th style="text-align: right;">ÜMUMI MƏBLƏG</th>
-                <th style="width: 71px; text-align: right ;">{{data.cur_icon}}{{data.total}}</th>
+                <th style="width: 75px; text-align: right ;">{{data.cur_icon}}{{data.total}}</th>
             </tr>
         </table>
 

@@ -1,51 +1,112 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Login</title>
-</head>
-<body>
-    <h1>Login</h1>
-    <form action="/login" method="POST">
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-        </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <button id="login" type="button">Submit</button>
-    </form>
 
-    <script>
-        document.getElementById("login").addEventListener("click", function (event) {
-          event.preventDefault()
-    
-          var email = document.getElementById("email").value;
-          var password = document.getElementById("password").value;
-    
-          var user = {
-            email: email,
-            password: password
-          };
-          console.log(user)
-    
-          fetch("http://0.0.0.0:8081/api/pdf/login", {
-              method: "POST",
-              headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(user)
-            })
-            .then(response => response.json())
-            .then(data => {
-              console.log("User loginned:", data);
-            })
-            .catch(error => {
-              console.error("Error:", error);
-            });
+<head>
+  <title>Login</title>
+</head>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+  }
+
+  h1 {
+    text-align: center;
+  }
+
+  form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  form div {
+    margin-bottom: 10px;
+  }
+
+  label {
+    display: block;
+    font-weight: bold;
+  }
+
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #dddddd;
+    border-radius: 3px;
+  }
+
+  button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #4caf50;
+    color: #ffffff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #45a049;
+  }
+</style>
+
+<body>
+  <h1>Login</h1>
+  <form action="/login" method="POST">
+    <div>
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+    <div>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+    </div>
+    <button id="login" type="button">Submit</button>
+  </form>
+
+  <script>
+    document.getElementById("login").addEventListener("click", function (event) {
+      event.preventDefault()
+
+      var email = document.getElementById("email").value;
+      var password = document.getElementById("password").value;
+
+      var user = {
+        email: email,
+        password: password
+      };
+
+      fetch("http://0.0.0.0:8081/api/pdf/login", {
+          method: "POST",
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(user)
+        })
+        .then(response => {
+          response.json()
+          if (response.status == 401) {
+            alert("Invalid password or email")
+          }
+        } )
+        .then(data => {
+          console.log("User loginned:", data);
+          // window.location.replace(`http://0.0.0.0:8081/api/pdf/admin`)
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          
         });
-      </script>
+    });
+  </script>
 </body>
+
 </html>
