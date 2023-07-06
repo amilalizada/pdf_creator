@@ -1,7 +1,9 @@
 import pdfkit
 import base64
 from pdf2docx import Converter
+from fastapi_jwt_auth import AuthJWT
 from html2docx import html2docx
+from fastapi.param_functions import Depends
 def aa():
   with open("./templates/tta.html") as fp:
     html = fp.read()
@@ -191,7 +193,7 @@ def get_html_string():
 
     <div style="width: 100%; margin: auto; padding-left: 35px; margin: 0px; box-sizing: border-box;" class="d-flex justify-content-between mt-4">
       <div style="width: 200px;" class="note">
-        <span style="margin-left: 15px;" class="notes-label col-6">Notes:</span>
+        <span class="notes-label col-6 pl-0">Notes:</span>
       </div>
       <div style="width: 280px;" class="totals">
         <div class="text-right">
@@ -448,3 +450,10 @@ def date_covnerting_to_human(date):
     converted = f"{day} {month} {year}"
 
     return converted
+
+
+class AuthUser:
+
+  def __init__(self, Authorize: AuthJWT = Depends(AuthJWT)):
+    print('here')
+    Authorize.jwt_required()

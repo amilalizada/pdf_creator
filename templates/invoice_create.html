@@ -289,7 +289,6 @@
                     "total_price": qty * unitPrice
                 })
             })
-
             var body = {
                 comp_id: comp_option,
                 proj_id: proj_option,
@@ -302,7 +301,8 @@
             fetch("http://0.0.0.0:8081/api/pdf/convert-invoice", {
                     method: 'POST',
                     headers: {
-                        Accept: 'application/json',
+                        
+                        'Authorization': `Bearer ${localStorage.getItem("access_token")}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(body)

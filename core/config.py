@@ -1,5 +1,5 @@
 from pydantic import BaseSettings
-
+from fastapi_jwt_auth import AuthJWT
 
 class AppSettings(BaseSettings):
     app_title: str = "PDF Creator API"
@@ -12,7 +12,10 @@ class AppSettings(BaseSettings):
     db_password: str = "12345"
     db_user: str = "root"
     db_port: int = 3309
-
+    # authjwt_secret_key: str = "secret"
+    SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+    ALGORITHM = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES = 30
     class Config:
         env_file = ".env"
 
@@ -109,3 +112,7 @@ def get_config():
     print(settings)
     # settings.authjwt_secret_key = settings.app.auth_token
     return settings
+
+# @AuthJWT.load_config
+# def get_config():
+#     return AppSettings()

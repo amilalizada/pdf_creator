@@ -92,18 +92,20 @@
           body: JSON.stringify(user)
         })
         .then(response => {
-          response.json()
           if (response.status == 401) {
             alert("Invalid password or email")
           }
-        } )
-        .then(data => {
-          console.log("User loginned:", data);
-          // window.location.replace(`http://0.0.0.0:8081/api/pdf/admin`)
+          return response.json()
+        })
+        .then((responseJson) => {
+          console.log(responseJson);
+          localStorage.setItem("access_token", responseJson["access_token"])
+          window.location.replace(`http://0.0.0.0:8081/api/pdf/navigation`);
+
         })
         .catch(error => {
           console.error("Error:", error);
-          
+
         });
     });
   </script>

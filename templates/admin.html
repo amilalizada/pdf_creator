@@ -328,12 +328,13 @@
                 password: password
             };
             console.log(user)
-
+            jwt = localStorage.getItem("access_token")
             fetch("http://0.0.0.0:8081/api/pdf/create", {
                     method: "POST",
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authentication': `Bearer ${jwt}`
                     },
                     body: JSON.stringify(user)
                 })

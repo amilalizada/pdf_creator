@@ -23,3 +23,4 @@ tomli==2.0.1
 typing_extensions==4.6.3
 Werkzeug==2.3.6
 zipp==3.15.0
+fastapi-jwt-auth @ git+https://git@github.com/ahaydarli/fastapi-jwt-auth.git@44a8f2427c61a72f33ac38ce0c014c0d81c41ace

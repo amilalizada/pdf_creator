@@ -1,5 +1,4 @@
 import hashlib
-from posixpath import abspath, sep
 import time
 import os
 import json
@@ -30,17 +29,22 @@ from app.utils import (
     date_covnerting_to_human,
     convert_pdf_to_doc,
     aa,
+    AuthUser
 )
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
+# from email.mime.multipart import MIMEMultipart
+# from email.mime.base import MIMEBase
 from fastapi_mail import FastMail, MessageSchema, MessageType
 from core.extensions import email_conf
+from fastapi_jwt_auth import AuthJWT
+from .auth_utils import AuthHandler
+
 
 
 router = APIRouter(prefix="", tags=["pdf"])
 
 templates = Jinja2Templates(directory="templates")
 templates_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+auth_handler = AuthHandler()
 env = Environment(loader=FileSystemLoader(templates_dir))
 
 
@@ -55,33 +59,38 @@ def login_get(request: Request):
 
 
 @router.post("/login")
-def log_in(data: LoginInputSchema):
+def log_in(data: LoginInputSchema, Authorize: AuthJWT = Depends()):
     user = User.get_or_404(User.email == data.email)
 
     if user.password != hashlib.sha256(data.password.encode()).hexdigest():
         return JSONResponse(status_code=401, content={"error": "Invalid username or password"})
+    
+    access_token = auth_handler.encode_token(user.email)
 
-    return {"ok": "ok"}
+    return {"access_token": access_token}
+
 
 
 @router.get("/create")
-def create_user_get(request: Request):
+def create_user_get(request: Request, email=Depends(auth_handler.auth_wrapper)):
+
     return templates.TemplateResponse("create_user.html", {"request": request})
 
 
 @router.post("/create")
-def create_user(data: CreateUserInput):
+def create_user(data: CreateUserInput, email=Depends(auth_handler.auth_wrapper)):
+    print('here')
     user = User.select().where(User.email == data.email)
 
-    if user:
-        return Response(status_code=status.HTTP_400_BAD_REQUEST)
-    hashed_password = hashlib.sha256(data.password.encode()).hexdigest()
-    user = User.create(
-        full_name=data.fullname.strip(),
-        email=data.email.strip(),
-        password=hashed_password,
-        created_at=int(time.time()),
-    )
+    # if user:
+    #     return Response(status_code=status.HTTP_400_BAD_REQUEST)
+    # hashed_password = hashlib.sha256(data.password.encode()).hexdigest()
+    # user = User.create(
+    #     full_name=data.fullname.strip(),
+    #     email=data.email.strip(),
+    #     password=hashed_password,
+    #     created_at=int(time.time()),
+    # )
 
     return status.HTTP_200_OK
 
@@ -195,7 +204,7 @@ async def preview(id: int, request: Request):
     inv_id = pdf_data["invoice_id"]
     options = {
         "page-size": "A4",
-        "margin-top": "20mm",
+        "margin-top": "40mm",
         "margin-right": "0mm",
         "margin-bottom": "0mm",
         "margin-left": "0mm",
