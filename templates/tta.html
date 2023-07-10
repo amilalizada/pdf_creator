@@ -215,6 +215,7 @@
     <button onclick="openMailApp()">Open Mail App</button>
 
     <script>
+        const id = document.getElementById('tta_id').value;
         function donwload() {
             const id = document.getElementById('tta_id').value;
             var inpArr = []
@@ -296,7 +297,7 @@
         }
 
         function openMailApp() {
-            fetch(`http://0.0.0.0:8081/api/pdf/open-mail`, {
+            fetch(`http://0.0.0.0:8081/api/pdf/open-mail/${id}`, {
                     method: 'GET',
                     headers: {
                         // Accept: 'application/pdf',

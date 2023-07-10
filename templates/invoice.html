@@ -209,7 +209,8 @@
     </div>
 
     <button onclick="donwload()" type="button">Download Created PDF</button>
-    <button onclick="sendEmail()" type="button">Send file to selected company email</button>
+    <button onclick="openMailApp()">Open Mail App</button>
+    <!-- <button onclick="sendEmail()" type="button">Send file to selected company email</button> -->
 
     <script>
       function donwload() {
@@ -242,6 +243,7 @@
             console.error("Error:", error);
           });
       }
+      const inv_id = document.getElementById('invoice_id').innerText;
 
       function sendEmail() {
         const inv_id = document.getElementById('invoice_id').innerText;
@@ -274,7 +276,23 @@
 
                   console.error("Error:", error);
                 });
+
       }
+      function openMailApp() {
+            fetch(`http://0.0.0.0:8081/api/pdf/open-mail-inv/${inv_id}`, {
+                    method: 'GET',
+                    headers: {
+                        // Accept: 'application/pdf',
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then(response => response.json())
+                .then(response => {
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+        }
     </script>
 </body>
 

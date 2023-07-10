@@ -23,7 +23,7 @@ class CreateUserInput(BaseModel):
 
 
 class LoginInputSchema(BaseModel):
-    email: EmailStr
+    username: EmailStr
     password: str
 
     class Config:

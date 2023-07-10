@@ -199,7 +199,7 @@ def get_html_string():
         <div class="text-right">
           <div class="d-flex justify-content-between">
             <p style="color: #6d64e8;" class="summary-label">Subtotal</p>
-            <span class="summary-value">{{data.cur_icon}}{{data.final_amount}}</span>
+            <span class="summary-value">{{data.cur_icon}}{{data.total}}</span>
           </div>
 
         </div>

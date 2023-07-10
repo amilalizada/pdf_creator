@@ -60,7 +60,7 @@ def login_get(request: Request):
 
 @router.post("/login")
 def log_in(data: LoginInputSchema, Authorize: AuthJWT = Depends()):
-    user = User.get_or_404(User.email == data.email)
+    user = User.get_or_404(User.email == data.username)
 
     if user.password != hashlib.sha256(data.password.encode()).hexdigest():
         return JSONResponse(status_code=401, content={"error": "Invalid username or password"})
@@ -78,7 +78,9 @@ def create_user_get(request: Request, email=Depends(auth_handler.auth_wrapper)):
 
 
 @router.post("/create")
-def create_user(data: CreateUserInput, email=Depends(auth_handler.auth_wrapper)):
+def create_user(request: Request, data: CreateUserInput, email=Depends(auth_handler.auth_wrapper)):
+    print(request.headers.get("Authorization"))
+
     print('here')
     user = User.select().where(User.email == data.email)
 
@@ -138,8 +140,10 @@ def create_proj_get(request: Request):
 
 @router.get("/create-doc")
 def create_doc(request: Request):
+    last_inv = list(PdfData.select(PdfData.data))[0]
+    last_inv = json.loads(last_inv.data)["invoice_id"]
 
-    return templates.TemplateResponse("invoice_create.html", {"request": request})
+    return templates.TemplateResponse("invoice_create.html", {"request": request, "inv_id": last_inv})
 
 
 @router.get("/projects/{comp_id}")
@@ -153,6 +157,7 @@ def get_projects(comp_id: int, request: Request):
 def convert_pdf(data: ConvertInvoiceInputSchema, request: Request):
     company = list(Company.select().where(Company.id == data.comp_id).dicts())[0]
     project = list(Project.select().where(Project.id == data.proj_id).dicts())[0]
+    
 
     obj = {
         "company_name": company["name"],
@@ -164,7 +169,7 @@ def convert_pdf(data: ConvertInvoiceInputSchema, request: Request):
         "desciptions": data.descriptions,
         "invoice_id": data.invoice_id,
         "date": data.date,
-        "due_date": data.due_date,
+        "due_date": data.due_date
     }
 
     pdf_data = PdfData.create(
@@ -474,21 +479,21 @@ async def tta_doc_post(data: TTADocInputSchema, reuqest: Request):
     return {"id": tta_doc.id}
 
 
-@router.get("/open-mail")
-def open_mail_app():
+@router.get("/open-mail/{id}")
+def open_mail_app(id: int):
     try:
-        subprocess.run(["open", "-a", "Mail", "tta6.pdf"])
+        subprocess.run(["open", "-a", "Mail", f"tta{id}.pdf"])
         return "Default mail app opened successfully."
     except FileNotFoundError:
         return "Default mail app not found."
 
-    # try:
-    #     url = 'mailto:' + "amilalizada@gmail.com"
-    #     if "output33.pdf":
-    #         url += '?attachment=' + urllib.parse.quote("output33.pdf")
-    #     subprocess.run(['open', url])
-    #     return 'Mail compose window opened successfully.'
-    # except FileNotFoundError:
-    #     return 'Default mail app not found.'
-    # Additional code or template rendering can be done here
+
+@router.get("/open-mail-inv/{id}")
+def open_mail_app(id: int):
+    try:
+        subprocess.run(["open", "-a", "Mail", f"output{id}.pdf", "--args", "mailto:" + "amil@gmail.com"])
+        return "Default mail app opened successfully."
+    except FileNotFoundError:
+        return "Default mail app not found."
+
 
