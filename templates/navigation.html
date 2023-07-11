@@ -17,6 +17,8 @@
     }
     
     .button {
+      height: 100px;
+      width: 200px;
       margin: 10px;
       padding: 10px 20px;
       font-size: 18px;
@@ -27,15 +29,25 @@
       cursor: pointer;
     }
   </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body>
-  <div class="container">
+  <div style="width: 90%; margin: auto;" class="container-m text-center">
     <h1>Welcome!</h1>
-    <button onclick="goToAdmin()" class="button">Admin</button>
-    <button onclick="goToInvoice()" class="button">Create Invoice</button>
-    <button onclick="createTta()" class="button">Create TTH</button>
-    <button onclick="goToInvoiceList()" class="button">Invoice PDF List</button>
-    <button onclick="goToTtaist()" class="button">TTA PDF List</button>
+    <div class="row mt-5 mb-4">
+      <dov class="col-6 text-center"><button onclick="goToAdmin()" class="button">Admin</button></dov>
+      <dov class="col-6 text-center"><button onclick="goToInvoice()" class="button">Create Invoice</button></dov>
+    </div>
+    <div class="row mt-4">
+    
+    <div class="col-4"><button onclick="createTta()" class="button">Create TTH</button></div>
+    
+    <div class="col-4"><button onclick="goToInvoiceList()" class="button">Invoice PDF List</button></div>
+    
+    <div class="col-4"><button onclick="goToTtaist()" class="button">TTA PDF List</button></div>
+    </div>
+    
 
   </div>
 

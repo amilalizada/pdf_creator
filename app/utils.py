@@ -111,9 +111,9 @@ def get_html_string():
             <li>(051) 450-00-15</li>
           </ul>
 
-          <ul style="list-style: none;" class="bank-info flex-end">
+          <ul style="list-style: none;" class="bank-info flex-end pl-0">
             <li style="color: #6d64e8;">Tax ID: 2004130131</li>
-            <li style="color: #6d64e8;">IBAN: AZ76PAHA40060AZNHC0100164830</li>
+            <li style="color: #6d64e8;">IBAN:AZ76PAHA40060AZNHC0100164830</li>
             <li>Bank: «PAŞA Bank» ASC</li>
             <li>S.W.I.F.T BIC: PAHAAZ22</li>
             <li>Bank Code: 505141</li>
@@ -220,7 +220,7 @@ def get_html_string():
 
 
     <div style="height: 40px;" class="mt-5">
-      <img class="padding-left: 25px" src="/Users/amil/Documents/Projects/pdf_creator/images/sign.png" alt="Image">
+      <img style="padding-left: 25px; margin-left: 50px'" src="/Users/amil/Documents/Projects/pdf_creator/images/sign.png" alt="Image">
     </div>
 
 </body>

@@ -293,6 +293,22 @@
                     console.error("Error:", error);
                 });
         }
+
+        function goToInvoice() {
+        window.location.replace(`http://0.0.0.0:8081/api/pdf/create-doc`);
+      }
+      function goToAdmin() {
+        window.location.replace(`http://0.0.0.0:8081/api/pdf/admin`);
+      }
+      function goToInvoiceList() {
+        window.location.replace(`http://0.0.0.0:8081/api/pdf/invoice-list`);
+      }
+      function createTta() {
+        window.location.replace(`http://0.0.0.0:8081/api/pdf/tta-create`);
+      }
+      function goToTtaist() {
+        window.location.replace(`http://0.0.0.0:8081/api/pdf/tta-list`);
+      }
     </script>
 </body>
 

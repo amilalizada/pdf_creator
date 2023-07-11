@@ -31,21 +31,22 @@ from app.utils import (
     aa,
     AuthUser
 )
+from datetime import datetime, timedelta
 # from email.mime.multipart import MIMEMultipart
 # from email.mime.base import MIMEBase
 from fastapi_mail import FastMail, MessageSchema, MessageType
 from core.extensions import email_conf
 from fastapi_jwt_auth import AuthJWT
-from .auth_utils import AuthHandler
-
-
+from .auth_utils import create_access_token, jwt_check
+from fastapi.security import OAuth2PasswordBearer
+from jose import jwt, JWTError
 
 router = APIRouter(prefix="", tags=["pdf"])
 
 templates = Jinja2Templates(directory="templates")
 templates_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
-auth_handler = AuthHandler()
 env = Environment(loader=FileSystemLoader(templates_dir))
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
 
 
 @router.get("/", response_class=HTMLResponse)
@@ -59,40 +60,43 @@ def login_get(request: Request):
 
 
 @router.post("/login")
-def log_in(data: LoginInputSchema, Authorize: AuthJWT = Depends()):
+def log_in(data: LoginInputSchema):
     user = User.get_or_404(User.email == data.username)
 
     if user.password != hashlib.sha256(data.password.encode()).hexdigest():
         return JSONResponse(status_code=401, content={"error": "Invalid username or password"})
     
-    access_token = auth_handler.encode_token(user.email)
-
+    access_token_expires = timedelta(minutes=30)
+    access_token = create_access_token(
+        data={"sub": user.email, "is_admin": user.is_admin},
+        expires_delta=access_token_expires,
+    )
     return {"access_token": access_token}
 
 
-
 @router.get("/create")
-def create_user_get(request: Request, email=Depends(auth_handler.auth_wrapper)):
-
+def create_user_get(request: Request, token: str = Depends(oauth2_scheme)):
+    print('here')
+    
     return templates.TemplateResponse("create_user.html", {"request": request})
 
 
 @router.post("/create")
-def create_user(request: Request, data: CreateUserInput, email=Depends(auth_handler.auth_wrapper)):
-    print(request.headers.get("Authorization"))
-
-    print('here')
+def create_user(request: Request, data: CreateUserInput, token: str = Depends(oauth2_scheme)):
+    admin = jwt_check(token)
+    if not admin:
+        return JSONResponse(status_code=403, content={"error": "You don't have permission for this action"})
     user = User.select().where(User.email == data.email)
-
-    # if user:
-    #     return Response(status_code=status.HTTP_400_BAD_REQUEST)
-    # hashed_password = hashlib.sha256(data.password.encode()).hexdigest()
-    # user = User.create(
-    #     full_name=data.fullname.strip(),
-    #     email=data.email.strip(),
-    #     password=hashed_password,
-    #     created_at=int(time.time()),
-    # )
+    if user:  
+        return Response(status_code=status.HTTP_400_BAD_REQUEST)
+    
+    hashed_password = hashlib.sha256(data.password.encode()).hexdigest()
+    user = User.create(
+        full_name=data.fullname.strip(),
+        email=data.email.strip(),
+        password=hashed_password,
+        created_at=int(time.time()),
+    )
 
     return status.HTTP_200_OK
 
@@ -103,7 +107,7 @@ def create_user_get(request: Request):
 
 
 @router.post("/create-company")
-def create_comp(data: CreateCompanyInputSchema):
+def create_comp(data: CreateCompanyInputSchema, token: str = Depends(oauth2_scheme)):
     Company.create(
         name=data.name.strip(),
         address=data.address.strip(),
@@ -121,7 +125,7 @@ def create_comp_get(request: Request):
 
 
 @router.post("/create-project")
-def create_proj(data: CreateProjectInputSchema):
+def create_proj(data: CreateProjectInputSchema, token: str = Depends(oauth2_scheme)):
     Project.create(
         name=data.name.strip(),
         comp_id=int(data.comp_id),
@@ -166,7 +170,7 @@ def convert_pdf(data: ConvertInvoiceInputSchema, request: Request):
         "company_tax": company["tax_id"],
         "project_name": project["name"],
         "project_currency": project["currency"],
-        "desciptions": data.descriptions,
+        "desciptions": int(data.descriptions) + 1,
         "invoice_id": data.invoice_id,
         "date": data.date,
         "due_date": data.due_date
@@ -188,7 +192,6 @@ async def preview(id: int, request: Request):
     company = list(Company.select().where(Company.id == pdf_data["comp_id"]).dicts())[0]
     comp_id = pdf_data["comp_id"]
     proje = list(Project.select().where(Project.id == pdf_data["proj_id"]).dicts())[0]
-    print(proje["currency"])
     pdf_data = json.loads(pdf_data["data"])
     pdf_data["date"] = pdf_data["date"].replace("-", "/")
     pdf_data["due_date"] = pdf_data["due_date"].replace("-", "/")
@@ -208,17 +211,11 @@ async def preview(id: int, request: Request):
     pdf_data["total"] = total
     inv_id = pdf_data["invoice_id"]
     options = {
-        "page-size": "A4",
+        "page-size": "Letter",
         "margin-top": "40mm",
-        "margin-right": "0mm",
-        "margin-bottom": "0mm",
-        "margin-left": "0mm",
         "zoom": "1.0",
         "enable-local-file-access": True,
     }
-    # img = get_image_file_as_base64_data()
-    # print(img)
-    # pdf_data["img"] = img
     html_string = get_html_string()
     html_template = Template(html_string)
     rendered_html = html_template.render(data=pdf_data)
@@ -286,7 +283,7 @@ def list_comps(request: Request):
 
 
 @router.get("/contract-list/{comp_id}")
-def list_contracts(comp_id: int, request: Request):
+def list_contracts(comp_id: int, request: Request,):
     contracts = list(Contract.select().where(Contract.comp_id == comp_id).dicts())
 
     return contracts
@@ -314,6 +311,8 @@ async def send_mail(data: SendMailInput, request: Request):
 
 @router.get("/navigation")
 async def navig(request: Request):
+    print('ey')
+
     return templates.TemplateResponse("navigation.html", {"request": request})
 
 
@@ -427,8 +426,8 @@ async def prew_tta(c_id: int, request: Request):
     wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
 
     await convert_to_pdf(rendered_html, f"tta{c_id}.pdf")
-    doc_file = f"tta_doc_{c_id}.docx"
-    await convert_pdf_to_doc(f"tta{c_id}.pdf", doc_file)
+    # doc_file = f"tta_doc_{c_id}.docx"
+    # await convert_pdf_to_doc(f"tta{c_id}.pdf", doc_file)
 
     return templates.TemplateResponse(
         "tta.html", {"request": request, "data": doc_data}
@@ -445,7 +444,7 @@ async def tta_get(request: Request):
 
 
 @router.post("/tta-create")
-async def tta_post(data: TTAInputSchema, reuqest: Request):
+async def tta_post(data: TTAInputSchema, reuqest: Request, token: str = Depends(oauth2_scheme)):
     contract = Contract.create(
         name=data.name.strip(),
         comp_id=data.comp_id,
@@ -458,7 +457,7 @@ async def tta_post(data: TTAInputSchema, reuqest: Request):
 
 
 @router.post("/tta-doc")
-async def tta_doc_post(data: TTADocInputSchema, reuqest: Request):
+async def tta_doc_post(data: TTADocInputSchema, reuqest: Request, token: str = Depends(oauth2_scheme)):
     obj = {
         "currency": data.currency,
         "desc": data.descs,

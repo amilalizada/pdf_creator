@@ -107,9 +107,10 @@ def get_app_settings() -> AppSettings:
 
 
 settings = get_app_settings()
+print(settings)
+
 # fastapi-jwt-auth conf load
 def get_config():
-    print(settings)
     # settings.authjwt_secret_key = settings.app.auth_token
     return settings
 

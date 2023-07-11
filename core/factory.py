@@ -51,7 +51,7 @@ def create_app() -> FastAPI:
         # on_startup=[on_startup],
         # on_shutdown=[on_shutdown],
     )
-    app.mount("/imgs", StaticFiles(directory="images"), name='images')
+    app.mount("/static", StaticFiles(directory="static"), name="static")
 
     register_extensions(app)
     register_routers(app)

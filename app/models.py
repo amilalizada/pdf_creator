@@ -1,4 +1,5 @@
 from peewee import (
+    BooleanField,
     CharField,
     IntegerField,
     BigIntegerField,
@@ -20,6 +21,7 @@ class User(BaseModel):
     email = CharField()
     password = CharField()
     created_at = BigIntegerField()
+    is_admin = BooleanField()
 
     class Meta:
         table_name = "users"

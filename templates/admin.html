@@ -268,7 +268,8 @@
                     method: "POST",
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem("access_token")}`
                     },
                     body: JSON.stringify(company)
                 })
@@ -302,7 +303,8 @@
                     method: "POST",
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem("access_token")}`
                     },
                     body: JSON.stringify(proj)
                 })
@@ -334,7 +336,7 @@
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        'Authentication': `Bearer ${jwt}`
+                        'Authorization': `Bearer ${jwt}`
                     },
                     body: JSON.stringify(user)
                 })
@@ -369,13 +371,14 @@
                     method: "POST",
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem("access_token")}`
                     },
                     body: JSON.stringify(proj)
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log("User created successfully:", data);
+                    console.log(data);
                 })
                 .catch(error => {
                     console.error("Error:", error);
