@@ -1,5 +1,4 @@
 from abc import ABC
-import mysql.connector
 from fastapi import HTTPException
 from peewee import Model, MySQLDatabase, DoesNotExist
 from playhouse.shortcuts import ReconnectMixin
