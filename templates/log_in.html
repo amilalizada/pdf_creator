@@ -91,7 +91,7 @@
         password: password
       };
 
-      fetch("http://0.0.0.0:8081/api/pdf/login", {
+      fetch("http://142.93.160.105:8000/api/pdf/login", {
           method: "POST",
           headers: {
             'Accept': 'application/json',
@@ -106,7 +106,7 @@
             return 0
           }
           else {
-            window.location.href = "http://0.0.0.0:8081/api/pdf/navigation"
+            window.location.href = "http://142.93.160.105:8000/api/pdf/navigation"
           }
 
         })

@@ -200,7 +200,7 @@
             };
             console.log(body);
 
-            fetch("http://0.0.0.0:8081/api/pdf/tta-doc", {
+            fetch("http://142.93.160.105:8000/api/pdf/tta-doc", {
                     method: 'POST',
                     headers: {
                         Accept: 'application/json',
@@ -212,7 +212,7 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
-                    window.location.replace(`http://0.0.0.0:8081/api/pdf/tta-preview/${data["id"]}`)
+                    window.location.replace(`http://142.93.160.105:8000/api/pdf/tta-preview/${data["id"]}`)
                 })
                 .catch(error => {
                     console.error("Error:", error);
@@ -287,7 +287,7 @@
             let option = e.target;
             comp_id = option.value
             console.log(comp_id, "EY");
-            fetch(`http://0.0.0.0:8081/api/pdf/contract-list/${comp_id}`, {
+            fetch(`http://142.93.160.105:8000/api/pdf/contract-list/${comp_id}`, {
                     method: 'GET',
                     headers: {
                         Accept: 'application/json',
