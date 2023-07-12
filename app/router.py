@@ -76,7 +76,6 @@ def log_in(data: LoginInputSchema):
 
 @router.get("/create")
 def create_user_get(request: Request, token: str = Depends(oauth2_scheme)):
-    print('here')
     
     return templates.TemplateResponse("create_user.html", {"request": request})
 

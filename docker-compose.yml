@@ -6,9 +6,10 @@ services:
     build: .
     image: pdf-creator
     restart: always
+    ports:
+      - 8000:80
     environment:
       - MODULE_NAME=server
-      - PORT=5000
   db:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
@@ -18,7 +19,6 @@ services:
     environment:
       MYSQL_DATABASE: 'jl_pdf_db'
       MYSQL_ROOT_PASSWORD: '12345'
-
   adminer:
     image: adminer
     restart: always
