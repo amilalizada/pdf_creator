@@ -12,7 +12,6 @@ services:
     environment:
       - MODULE_NAME=server
   db:
-    platform: linux/aarch64
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
     restart: always
@@ -22,7 +21,6 @@ services:
       MYSQL_DATABASE: 'jl_pdf_db'
       MYSQL_ROOT_PASSWORD: '12345'
   adminer:
-    platform: linux/aarch64
     image: adminer
     restart: always
     ports:
