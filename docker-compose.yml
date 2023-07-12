@@ -4,7 +4,8 @@ version: '3.4'
 services:
   pdf-creator:
     platform: linux/arm64/v8
-    build: .
+    build:
+        context: .
     image: pdf-creator
     restart: always
     ports:
