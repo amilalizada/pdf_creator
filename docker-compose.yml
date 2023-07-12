@@ -3,6 +3,7 @@ version: '3.4'
 
 services:
   pdf-creator:
+    platform: linux/arm64/v8
     build: .
     image: pdf-creator
     restart: always
