@@ -18,7 +18,7 @@ db_connection = StrictMySQLDatabase(
     user=settings.db_user,
     password=settings.db_password,
     port=3309,
-    host="localhost",
+    host="db",
 )
 
 class BaseModel(Model):
