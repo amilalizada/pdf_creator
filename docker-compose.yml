@@ -5,6 +5,7 @@ services:
   pdf-creator:
     build: .
     image: pdf-creator
+    platform: linux/arm64/v8
     restart: always
     ports:
       - 8000:80
