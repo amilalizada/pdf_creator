@@ -4,8 +4,8 @@ version: '3.1'
 services:
   pdf-creator:
     build: .
-    platform: linux/aarch64
     image: pdf-creator
+    platform: linux/aarch64
     restart: always
     ports:
       - 8000:80
