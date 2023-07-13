@@ -40,7 +40,7 @@ created_at bigint
 project = """
 create table if not exists projects(
 id int auto_increment primary key,
-data text,
+name varchar(50),
 comp_id int,
 currency varchar(20),
 created_at bigint,
