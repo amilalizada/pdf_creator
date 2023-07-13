@@ -1,17 +1,28 @@
 from core.database import db, db_connection
+import pymysql
 
 db.initialize(db_connection)
+
+connection = pymysql.connect(
+    host='142.93.160.105',
+    port=3309,
+    user='root',
+    password='12345',
+    database='jl_pdf_db'
+)
 
 def execute(query):
     db.execute(query)
 
 user = """
-    create table users (id int auto_increment primary key,
+create table users (
+id int auto_increment primary key,
 full_name varchar(50),
 email varchar(50),
 password varchar(255),
 created_at bigint,
-is_admin bool)
+is_admin bool
+)
 """
 
 company = """
@@ -76,5 +87,10 @@ foreign key (contract_id) references contracts(id) on delete cascade
 
 q_list = [user, company, project, contracts, pdf_data, tta_data]
 
+
+cursor = connection.cursor()
 for q in q_list:
-    execute(q)
+    cursor.execute(q)
+    connection.commit()
+cursor.close()
+connection.close()
