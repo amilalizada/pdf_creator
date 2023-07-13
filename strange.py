@@ -85,12 +85,13 @@ foreign key (contract_id) references contracts(id) on delete cascade
 )
 """
 
-q_list = [user, company, project, contracts, pdf_data, tta_data]
+q_list = [user, company, project, pdf_data, contracts, tta_data]
 
 
 cursor = connection.cursor()
 for q in q_list:
     cursor.execute(q)
     connection.commit()
+    print(q)
 cursor.close()
 connection.close()
