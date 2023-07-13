@@ -26,7 +26,7 @@ is_admin bool
 """
 
 company = """
-create table if not exists company (
+create table if not exists companies (
 id int auto_increment primary key,
 name varchar(50),
 email varchar(50),
