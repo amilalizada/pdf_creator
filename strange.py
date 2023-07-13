@@ -1,0 +1,80 @@
+from core.database import db, db_connection
+
+db.initialize(db_connection)
+
+def execute(query):
+    db.execute(query)
+
+user = """
+    create table users (id int auto_increment primary key,
+full_name varchar(50),
+email varchar(50),
+password varchar(255),
+created_at bigint,
+is_admin bool)
+"""
+
+company = """
+create table company (
+id int auto_increment primary key,
+name varchar(50),
+email varchar(50),
+address varchar(100),
+location varchar(100),
+tax_id bigint,
+created_at bigint
+)
+"""
+
+project = """
+create table projects (
+id int auto_increment primary key,
+data text,
+comp_id int,
+currency varchar(20),
+created_at bigint,
+foreign key (comp_id) references companies(id) on delete cascade
+)
+"""
+
+pdf_data = """
+create table pdf_data (
+id int auto_increment primary key,
+data text,
+comp_id int,
+proj_id int,
+created_at bigint,
+foreign key (comp_id) references companies(id) on delete cascade,
+foreign key (proj_id) references projects(id) on delete cascade
+)
+"""
+
+contracts = """
+create table contracts (
+id int auto_increment primary key,
+name varchar(100),
+data text,
+comp_id int,
+date varchar(100),
+currency varchar(20),
+foreign key (comp_id) references companies(id) on delete cascade
+)
+"""
+
+tta_data = """
+create table tta_data (
+id int auto_increment primary key,
+name varchar(100),
+data text,
+comp_id int,
+contract_id int,
+create_date varchar(50),
+foreign key (comp_id) references companies(id) on delete cascade,
+foreign key (contract_id) references contracts(id) on delete cascade
+)
+"""
+
+q_list = [user, company, project, contracts, pdf_data, tta_data]
+
+for q in q_list:
+    execute(q)

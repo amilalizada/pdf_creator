@@ -1,3 +1,4 @@
+from calendar import Calendar
 from peewee import (
     BooleanField,
     CharField,
@@ -76,7 +77,7 @@ class Contract(BaseModel):
 
 class TTAData(BaseModel):
     id = AutoField()
-    name = TextField()
+    name = CharField()
     data = TextField()
     comp_id = ForeignKeyField(column_name='comp_id', field='id', model=Company, null=True)
     contract_id = ForeignKeyField(column_name='contract_id', field='id', model=Contract, null=True)
