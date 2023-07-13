@@ -106,6 +106,7 @@
             return 0
           }
           else {
+            localStorage.setItem("access_token", response["access_token"])
             window.location.href = "http://142.93.160.105:8000/api/pdf/navigation"
           }
 
