@@ -15,7 +15,7 @@ def execute(query):
     db.execute(query)
 
 user = """
-create table users if not exists (
+create table if not exists users (
 id int auto_increment primary key,
 full_name varchar(50),
 email varchar(50),
@@ -26,7 +26,7 @@ is_admin bool
 """
 
 company = """
-create table company if not exists (
+create table if not exists company (
 id int auto_increment primary key,
 name varchar(50),
 email varchar(50),
@@ -38,7 +38,7 @@ created_at bigint
 """
 
 project = """
-create table projects if not exists (
+create table if not exists projects(
 id int auto_increment primary key,
 data text,
 comp_id int,
@@ -49,7 +49,7 @@ foreign key (comp_id) references companies(id) on delete cascade
 """
 
 pdf_data = """
-create table pdf_data if not exists (
+create table if not exists pdf_data(
 id int auto_increment primary key,
 data text,
 comp_id int,
@@ -61,7 +61,7 @@ foreign key (proj_id) references projects(id) on delete cascade
 """
 
 contracts = """
-create table contracts if not exists (
+create table if not exists contracts(
 id int auto_increment primary key,
 name varchar(100),
 data text,
@@ -73,7 +73,7 @@ foreign key (comp_id) references companies(id) on delete cascade
 """
 
 tta_data = """
-create table tta_data if not exists (
+create table if not exists tta_data(
 id int auto_increment primary key,
 name varchar(100),
 data text,
