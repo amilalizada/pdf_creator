@@ -7,7 +7,7 @@ services:
     image: pdf-creator
     restart: always
     ports:
-      - 8001:81
+      - 8000:80
     environment:
       - MODULE_NAME=server
   db:
