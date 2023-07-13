@@ -261,6 +261,7 @@ def admin(request: Request):
         .join(Company, on=Company.id == Project.comp_id)
         .dicts()
     )
+    print(projects)
 
     return templates.TemplateResponse(
         "admin.html", {"request": request, "companies": companies, "projects": projects}
