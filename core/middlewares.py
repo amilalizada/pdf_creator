@@ -55,8 +55,6 @@ class CatchExceptionsMiddleware(BaseHTTPMiddleware):
             error_msg = "".join(error_data)
             print(f"Error occurred: {str(error_data)}")
 
-            
-
         return response
 
 

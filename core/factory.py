@@ -4,7 +4,7 @@ from app import views as api_views
 from core.database import db, db_connection
 from core.middlewares import CatchExceptionsMiddleware
 from fastapi.staticfiles import StaticFiles
-from starlette.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
 
 def register_extensions(app: object):
@@ -22,13 +22,13 @@ def register_routers(app):
     return None
 
 def register_middleware(app):
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+    # app.add_middleware(
+    #     CORSMiddleware,
+    #     allow_origins=["*"],
+    #     allow_credentials=True,
+    #     allow_methods=["*"],
+    #     allow_headers=["*"],
+    # )
     app.add_middleware(CatchExceptionsMiddleware)
 
 def create_app() -> FastAPI:
