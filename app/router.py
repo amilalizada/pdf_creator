@@ -144,8 +144,12 @@ def create_proj_get(request: Request):
 
 @router.get("/create-doc")
 def create_doc(request: Request):
-    last_inv = list(PdfData.select(PdfData.data))[0]
-    last_inv = json.loads(last_inv.data)["invoice_id"]
+    last_inv = PdfData.select(PdfData.data)
+    if last_inv:
+        last_inv = list(last_inv)[0]
+        last_inv = json.loads(last_inv.data)["invoice_id"]
+    else:
+        last_inv = 1
 
     return templates.TemplateResponse("invoice_create.html", {"request": request, "inv_id": last_inv})
 
