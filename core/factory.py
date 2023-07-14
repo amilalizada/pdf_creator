@@ -22,13 +22,13 @@ def register_routers(app):
     return None
 
 def register_middleware(app):
-    # app.add_middleware(
-    #     CORSMiddleware,
-    #     allow_origins=["*"],
-    #     allow_credentials=True,
-    #     allow_methods=["*"],
-    #     allow_headers=["*"],
-    # )
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     app.add_middleware(CatchExceptionsMiddleware)
 
 def create_app() -> FastAPI:
