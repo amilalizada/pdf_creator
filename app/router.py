@@ -71,7 +71,8 @@ def log_in(data: LoginInputSchema):
         data={"sub": user.email, "is_admin": user.is_admin},
         expires_delta=access_token_expires,
     )
-    return {"access_token": access_token}
+    print({"access_token": access_token})
+    return JSONResponse(status_code=200, content={"access": access_token})
 
 
 @router.get("/create")

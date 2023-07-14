@@ -56,3 +56,5 @@ create_date varchar(50),
 foreign key (comp_id) references companies(id) on delete cascade,
 foreign key (contract_id) references contracts(id) on delete cascade
 )
+
+insert into users (full_name, email, password, created_at, is_admin) values('Amil Alizada', 'amilalizada@gmail.com', '41e5653fc7aeb894026d6bb7b2db7f65902b454945fa8fd65a6327047b5277fb', 1689248295, 1)

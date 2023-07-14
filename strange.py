@@ -3,8 +3,16 @@ import pymysql
 
 db.initialize(db_connection)
 
+# connection = pymysql.connect(
+#     host='142.93.160.105',
+#     port=3309,
+#     user='root',
+#     password='12345',
+#     database='jl_pdf_db'
+# )
+
 connection = pymysql.connect(
-    host='142.93.160.105',
+    host='127.0.0.1',
     port=3309,
     user='root',
     password='12345',

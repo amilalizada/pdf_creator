@@ -76,7 +76,7 @@
         <button id="login" type="button">Submit</button>
       </form>
     </div>
-    
+
   </div>
 
   <script>
@@ -90,8 +90,9 @@
         username: email,
         password: password
       };
-
-      fetch("http://142.93.160.105:8000/api/pdf/login", {
+      let check = false
+      let redirect = ''
+      fetch("http://142.93.160.105/api/pdf/login", {
           method: "POST",
           headers: {
             'Accept': 'application/json',
@@ -100,22 +101,27 @@
           body: JSON.stringify(user)
         })
         .then(response => {
-          response.json()
-          if (response.status == 401){
-            alert("Invalid username or password")
-            return 0
+          if (response.status === 401) {
+            alert("Invalid username or password");
+            check = true
+            redirect = "http://142.93.160.105/api/pdf/login"
           }
-          else {
-            localStorage.setItem("access_token", response["access_token"])
-            window.location.href = "http://142.93.160.105:8000/api/pdf/navigation"
+          else{
+            redirect = "http://142.93.160.105/api/pdf/navigation"
           }
-
+          return response.json();
         })
-        
-        
+        .then(data => {
+          console.log("User created successfully:", data);
+          // Assuming the returned data contains an 'access_token' field
+          localStorage.setItem('access_token', data["access"]);
+          
+          window.location.href = redirect
+        })
         .catch(error => {
           console.error("Error:", error);
         });
+
     });
   </script>
 </body>
