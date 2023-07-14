@@ -113,7 +113,6 @@
         })
         .then(data => {
           console.log("User created successfully:", data);
-          // Assuming the returned data contains an 'access_token' field
           localStorage.setItem('access_token', data["access"]);
           
           window.location.href = redirect
