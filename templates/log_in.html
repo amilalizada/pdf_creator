@@ -92,23 +92,22 @@
       };
       let check = false
       let redirect = ''
-      fetch("http://142.93.160.105/api/pdf/login", {
+      fetch("http://142.93.160.105:8000/api/pdf/login", {
           method: "POST",
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           },
-          mode: 'no-cors',
           body: JSON.stringify(user)
         })
         .then(response => {
           if (response.status === 401) {
             alert("Invalid username or password");
             check = true
-            redirect = "http://142.93.160.105/api/pdf/login"
+            redirect = "http://142.93.160.105:8000/api/pdf/login"
           }
           else{
-            redirect = "http://142.93.160.105/api/pdf/navigation"
+            redirect = "http://142.93.160.105:8000/api/pdf/navigation"
           }
           return response.json();
         })
