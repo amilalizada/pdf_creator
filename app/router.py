@@ -174,8 +174,8 @@ def convert_pdf(data: ConvertInvoiceInputSchema, request: Request):
         "company_tax": company["tax_id"],
         "project_name": project["name"],
         "project_currency": project["currency"],
-        "desciptions": int(data.descriptions) + 1,
-        "invoice_id": data.invoice_id,
+        "desciptions": data.descriptions,
+        "invoice_id": int(data.invoice_id) + 1,
         "date": data.date,
         "due_date": data.due_date
     }
