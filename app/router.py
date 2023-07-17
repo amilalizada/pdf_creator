@@ -223,7 +223,8 @@ async def preview(id: int, request: Request):
     html_string = get_html_string()
     html_template = Template(html_string)
     rendered_html = html_template.render(data=pdf_data)
-    wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
+    # wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
+    wkhtmltopdf_path = "/usr/bin/wkhtmltopdf"
     await convert_to_pdf(
         rendered_html,
         f"output{inv_id}.pdf",
@@ -266,7 +267,6 @@ def admin(request: Request):
         .join(Company, on=Company.id == Project.comp_id)
         .dicts()
     )
-    print(projects)
 
     return templates.TemplateResponse(
         "admin.html", {"request": request, "companies": companies, "projects": projects}
@@ -275,7 +275,6 @@ def admin(request: Request):
 
 @router.get("/open")
 def openn(request: Request):
-    # companies = Company.select().dicts()
 
     return templates.TemplateResponse("invoice.html", {"request": request})
 
