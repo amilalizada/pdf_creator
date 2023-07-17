@@ -2,7 +2,9 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9
 
 COPY requirements.txt requirements.txt
 
-RUN pip install --no-cache-dir --upgrade pip==21.2.4
+RUN apt-get install -y build-essential libssl-dev libffi-dev python3-dev
+
+RUN pip install --upgrade pip==21.2.4
 
 RUN pip install -r requirements.txt 
 
