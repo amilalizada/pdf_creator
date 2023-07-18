@@ -26,6 +26,7 @@ services:
       - 8080:8080
   nginx:
     image: nginx
+    restart: always
     ports:
       - 81:81
     volumes:

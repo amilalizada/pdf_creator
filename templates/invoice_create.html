@@ -181,12 +181,12 @@
 
     <script>
         function main() {
-            window.location.replace(`http://142.93.160.105:8000/api/pdf/navigation`);
+            window.location.replace(`http://140.238.215.73:8000/api/pdf/navigation`);
         }
         // var countOfDesc = prompt("Please enter count of descriptions first: ")
         // console.log(countOfDesc);
         // if (countOfDesc == null) {
-        //     window.location.replace(`http://142.93.160.105:8000/api/pdf/navigation`)
+        //     window.location.replace(`http://140.238.215.73:8000/api/pdf/navigation`)
         // }
         // while (countOfDesc > 1) {
         //     document.querySelector(".section").innerHTML += `<div class="desc col-3 mb-5 mr-5">
@@ -219,7 +219,7 @@
 
         const companies = document.getElementById('companySelect');
         const projects_select = document.getElementById('projectSelect');
-        fetch(`http://142.93.160.105:8000/api/pdf/list-comps`, {
+        fetch(`http://140.238.215.73:8000/api/pdf/list-comps`, {
                 method: 'GET',
                 headers: {
                     Accept: 'application/json',
@@ -245,7 +245,7 @@
             projects_select.innerHTML = '<option class="project" value="">Projects</option>'
             let option = e.target;
             comp_id = option.value
-            fetch(`http://142.93.160.105:8000/api/pdf/projects/${comp_id}`, {
+            fetch(`http://140.238.215.73:8000/api/pdf/projects/${comp_id}`, {
                     method: 'GET',
                     headers: {
                         Accept: 'application/json',
@@ -298,7 +298,7 @@
                 descriptions: inpArr
             };
 
-            fetch("http://142.93.160.105:8000/api/pdf/convert-invoice", {
+            fetch("http://140.238.215.73:8000/api/pdf/convert-invoice", {
                     method: 'POST',
                     headers: {
                         
@@ -310,7 +310,7 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log("User created successfully:", data);
-                    window.location.replace(`http://142.93.160.105:8000/api/pdf/preview/${data["id"]}`);
+                    window.location.replace(`http://140.238.215.73:8000/api/pdf/preview/${data["id"]}`);
                 })
                 .catch(error => {
                     console.error("Error:", error);
