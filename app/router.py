@@ -224,7 +224,7 @@ async def preview(id: int, request: Request):
     html_template = Template(html_string)
     rendered_html = html_template.render(data=pdf_data)
     # wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
-    wkhtmltopdf_path = "/usr/bin/wkhtmltopdf"
+    wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
     await convert_to_pdf(
         rendered_html,
         f"output{inv_id}.pdf",
