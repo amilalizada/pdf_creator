@@ -10,12 +10,20 @@ RUN apt-get update && apt-get install -y \
     xvfb \
     fontconfig
 
+RUN apt-get update
+
+RUN wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb \
+    && dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb \
+    && rm libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+
+RUN wget https://netix.dl.sourceforge.net/project/libjpeg-turbo/2.0.5/libjpeg-turbo-official_2.0.5_amd64.deb \
+    && dpkg -i libjpeg-turbo-official_2.0.5_amd64.deb \
+    && rm libjpeg-turbo-official_2.0.5_amd64.deb
+
 RUN wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_amd64.deb \
     && dpkg -i  wkhtmltox_0.12.6-1.focal_amd64.deb \
     && apt-get install -f -y \
     && rm wkhtmltox_0.12.6-1.focal_amd64.deb
-
-RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 
 COPY . /app
 
