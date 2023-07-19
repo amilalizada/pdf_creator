@@ -42,6 +42,7 @@ name varchar(100),
 data text,
 comp_id int,
 date varchar(100),
+created_at bigint,
 currency varchar(20),
 foreign key (comp_id) references companies(id) on delete cascade
 )
