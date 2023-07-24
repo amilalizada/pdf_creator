@@ -212,7 +212,7 @@ def get_html_string():
         </div>
       </div>
 
-      
+
     </div>
     <div style="height: 40px;" class="total d-flex justify-content-end">
       <span style="color: #e01b84; font-family: sans-serif; font-size: 30px;"> {{data.cur_icon}}{{data.final_amount}}</span>
@@ -220,7 +220,7 @@ def get_html_string():
 
 
     <div style="height: 40px;" class="mt-5">
-      <img style="padding-left: 25px; margin-left: 50px'" src="/Users/amil/Documents/Projects/pdf_creator/images/sign.png" alt="Image">
+      <img style="padding-left: 25px; margin-left: 50px'" src="/app/static/sign.png" alt="Image">
     </div>
 
 </body>
@@ -246,6 +246,9 @@ def get_tta_html_string():
         * {
             margin: 0;
             padding: 0;
+        }
+        body {
+          font-family: sans-serif;
         }
 
         table {
@@ -289,7 +292,7 @@ def get_tta_html_string():
             </div>
             <div class="d-flex flex-column">
                 <div class="mt-2"  style="font-weight: bold;">
-                    Təsdiq edirəm:
+                    Təsdiq edirəm: &#8380;
                 </div>
                 <!-- <div class="mt-2"  style="font-weight: bold;">
                     "JLTECH" LLC
@@ -455,5 +458,4 @@ def date_covnerting_to_human(date):
 class AuthUser:
 
   def __init__(self, Authorize: AuthJWT = Depends(AuthJWT)):
-    print('here')
     Authorize.jwt_required()
