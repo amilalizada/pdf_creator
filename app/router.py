@@ -162,7 +162,7 @@ def get_projects(comp_id: int, request: Request):
 
 
 @router.post("/convert-invoice")
-def convert_pdf(data: ConvertInvoiceInputSchema, request: Request):
+def convert_pdf(data: ConvertInvoiceInputSchema, request: Request, token: str = Depends(oauth2_scheme)):
     company = list(Company.select().where(Company.id == data.comp_id).dicts())[0]
     project = list(Project.select().where(Project.id == data.proj_id).dicts())[0]
     
@@ -202,6 +202,7 @@ async def preview(id: int, request: Request):
     currency = "₼"
     if proje["currency"] == "usd":
         currency = "$"
+    pdf_data["currency"] =  proje["currency"]
     pdf_data["cur_icon"] = currency
     pdf_data["tax_id"] = company["tax_id"]
     final = 0
@@ -223,7 +224,6 @@ async def preview(id: int, request: Request):
     html_string = get_html_string()
     html_template = Template(html_string)
     rendered_html = html_template.render(data=pdf_data)
-    # wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
     wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
     await convert_to_pdf(
         rendered_html,
@@ -422,14 +422,14 @@ async def prew_tta(c_id: int, request: Request):
         "margin-bottom": "0mm",
         "margin-left": "0mm",
         "zoom": "1.0",
+        "enable-local-file-access": True,
     }
-    # print(data)
     html_string = get_tta_html_string()
     html_template = Template(html_string)
     rendered_html = html_template.render(data=doc_data, options=options)
     wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
 
-    await convert_to_pdf(rendered_html, f"tta{c_id}.pdf")
+    await convert_to_pdf(rendered_html, f"tta{c_id}.pdf", wkhtmltopdf_path, options)
     # doc_file = f"tta_doc_{c_id}.docx"
     # await convert_pdf_to_doc(f"tta{c_id}.pdf", doc_file)
 

@@ -180,8 +180,20 @@ def get_html_string():
         <tr>
           <td style="text-align: left;" class="desc">{{desc.description}}</td>
           <td>{{desc.qty}}</td>
-          <td>{{data.cur_icon}}{{desc.unitprice}}</td>
-          <td>{{data.cur_icon}}{{desc.total_price}}</td>
+          <td>
+          {% if data.currency == usd %}
+            $
+          {% else %}
+            <img src="/app/static/Azeri_manat_symbol.svg" width="10px" height="10px">
+          {% endif %}
+          {{desc.unitprice}}</td>
+          <td>
+          {% if data.currency == usd %}
+            $
+          {% else %}
+            <img src="/app/static/Azeri_manat_symbol.svg" width="10px" height="10px">
+          {% endif %}
+          {{desc.total_price}}</td>
         {% endfor %}
 
         </tr>
@@ -199,7 +211,11 @@ def get_html_string():
         <div class="text-right">
           <div class="d-flex justify-content-between">
             <p style="color: #6d64e8;" class="summary-label">Subtotal</p>
-            <span class="summary-value">{{data.cur_icon}}{{data.total}}</span>
+            <span class="summary-value">{% if data.currency == usd %}
+            $
+          {% else %}
+            <img src="/app/static/Azeri_manat_symbol.svg" width="10px" height="10px">
+          {% endif %}{{data.total}}</span>
           </div>
 
         </div>
@@ -207,7 +223,12 @@ def get_html_string():
           <div class="d-flex text-right justify-content-between">
 
             <p style="text-align: right; width: 60px; color: #6d64e8;" class="summary-label">VAT</p>
-            <span class="summary-value">{{data.cur_icon}}{{data.vat}}</span>
+            <span class="summary-value">
+            {% if data.currency == usd %}
+                $
+            { % else %}
+                <img src="/app/static/Azeri_manat_symbol.svg" width="10px" height="10px">
+            {% endif %}{{data.vat}}</span>
           </div>
         </div>
       </div>
@@ -215,7 +236,11 @@ def get_html_string():
 
     </div>
     <div style="height: 40px;" class="total d-flex justify-content-end">
-      <span style="color: #e01b84; font-family: sans-serif; font-size: 30px;"> {{data.cur_icon}}{{data.final_amount}}</span>
+      <span style="color: #e01b84; font-family: sans-serif; font-size: 30px;">{% if data.currency == usd %}
+            $
+          {% else %}
+            <img src="/app/static/az_curr.svg" width="20px" height="20px">
+          {% endif %}{{data.final_amount}}</span>
     </div>
 
 
@@ -247,8 +272,9 @@ def get_tta_html_string():
             margin: 0;
             padding: 0;
         }
+
         body {
-          font-family: sans-serif;
+            font-family: sans-serif;
         }
 
         table {
@@ -274,16 +300,17 @@ def get_tta_html_string():
 </head>
 
 <body>
+ <img src="/app/static/Azeri_manat_symbol.svg" width="10px" height="10px">
     <div style="width: 70%; margin: auto;" class="my_container mt-5 mb-5 p-0">
         <div class="header d-flex justify-content-between w-100">
             <div class="d-flex flex-column">
-                <div class="mt-2"  style="font-weight: bold;">
+                <div class="mt-2" style="font-weight: bold;">
                     Təsdiq edirəm:
                 </div>
                 <!-- <div class="mt-2"  style="font-weight: bold;">
                     "{{data.company_name}}" MMC
                 </div style="font-weight: bold;"> -->
-                <div class="mt-2"  style="font-weight: bold;">
+                <div class="mt-2" style="font-weight: bold;">
                     {{data.position}}u:
                 </div>
                 <div class="mt-3" style="font-weight: bold;">
@@ -291,13 +318,13 @@ def get_tta_html_string():
                 </div>
             </div>
             <div class="d-flex flex-column">
-                <div class="mt-2"  style="font-weight: bold;">
-                    Təsdiq edirəm: &#8380;
+                <div class="mt-2" style="font-weight: bold;">
+                    Təsdiq edirəm:
                 </div>
                 <!-- <div class="mt-2"  style="font-weight: bold;">
                     "JLTECH" LLC
                 </div> -->
-                <div class="mt-2"  style="font-weight: bold;">
+                <div class="mt-2" style="font-weight: bold;">
                     Direktor:
                 </div>
                 <div class="mt-3" style="font-weight: bold;">
@@ -349,17 +376,17 @@ def get_tta_html_string():
                 <th style="text-align: center ;">
                     Bir vahidinin
                     {% if data.currency == 'usd' %}
-                        (ABŞ dolları)
+                    (ABŞ dolları)
                     {% else  %}
-                        (Manat)
+                    (Manat)
                     {% endif %}
                 </th>
                 <th style="text-align: center ;">
                     Ümumi dəyəri
                     {% if data.currency == 'usd' %}
-                        (ABŞ dolları)
+                    (ABŞ dolları)
                     {% else  %}
-                        (Manat)
+                    (Manat)
                     {% endif %}
                 </th>
             </tr>
@@ -370,8 +397,22 @@ def get_tta_html_string():
                 <td style="text-align: left;">{{desc.service}}</td>
                 <td style="text-align: center;">{{desc.qty}}</td>
                 <td style="text-align: center;">{{desc.unit_of_meas}}</td>
-                <td style="text-align: right;">{{data.cur_icon}}{{desc.price_one}}</td>
-                <td style="text-align: right;">{{data.cur_icon}}{{desc.total_price}}</td>
+                <td style="text-align: right;">
+                    {% if data.currency == usd %}
+                    $
+                    { % else %}
+                    <img src="/app/static/Azeri_manat_symbol.svg" width="10px" height="10px">
+                    {% endif %}
+                    {{desc.price_one}}
+                </td>
+                <td style="text-align: right;">
+                    {% if data.currency == usd %}
+                    $
+                    { % else %}
+                    <img src="/app/static/Azeri_manat_symbol.svg" width="10px" height="10px">
+                    {% endif %}
+                    {{desc.total_price}}
+                </td>
             </tr>
             {% endfor %}
         </table>
@@ -379,17 +420,38 @@ def get_tta_html_string():
             <tr style="height: 25px; background-color: white;">
                 <th style="width: 28px;"></th>
                 <th style="text-align: right;">Cəmi</th>
-                <th style="width: 75px; text-align: right ;">{{data.cur_icon}}{{data.final}}</th>
+                <th style="width: 75px; text-align: right ;">
+                    {% if data.currency == usd %}
+                    $
+                    { % else %}
+                    <img src="/app/static/Azeri_manat_symbol.svg" width="10px" height="10px">
+                    {% endif %}
+                    {{data.final}}
+                </th>
             </tr>
             <tr style="height: 25px; background-color: white;">
                 <th style="width: 29px;"></th>
                 <th style="text-align: right;">Əlavə dəyər vergisi(18%):</th>
-                <th style="width: 75px; text-align: right ;">{{data.cur_icon}}{{data.vat}}</th>
+                <th style="width: 75px; text-align: right ;">
+                    {% if data.currency == usd %}
+                    $
+                    { % else %}
+                    <img src="/app/static/Azeri_manat_symbol.svg" width="10px" height="10px">
+                    {% endif %}
+                    {{data.vat}}
+                </th>
             </tr>
             <tr style="height: 25px; background-color: white;">
                 <th style="width: 29px;"></th>
                 <th style="text-align: right;">ÜMUMI MƏBLƏG</th>
-                <th style="width: 75px; text-align: right ;">{{data.cur_icon}}{{data.total}}</th>
+                <th style="width: 75px; text-align: right ;">
+                    {% if data.currency == usd %}
+                    $
+                    { % else %}
+                    <img src="/app/static/Azeri_manat_symbol.svg" width="10px" height="10px">
+                    {% endif %}
+                    {{data.total}}
+                </th>
             </tr>
         </table>
 
@@ -427,6 +489,7 @@ def get_tta_html_string():
 
 </html>
   """
+
 
 
 def date_covnerting_to_human(date):
