@@ -217,7 +217,7 @@
         const inv_id = document.getElementById('invoice_id').innerText;
         var inpArr = []
 
-        fetch(`http://140.238.215.73:8000/api/pdf/download/${inv_id}`, {
+        fetch(`http://0.0.0.0:8001/api/pdf/download/${inv_id}`, {
             method: 'GET',
             headers: {
               // Accept: 'application/pdf',
@@ -255,7 +255,7 @@
           "inv_id": inv_id,
           comp_id: comp_id
         }
-        fetch("http://140.238.215.73:8000/api/pdf/send-email", {
+        fetch("http://0.0.0.0:8001/api/pdf/send-email", {
                     method: 'POST',
                     headers: {
                         Accept: 'application/json',
@@ -267,19 +267,19 @@
                 .then(data => {
                     console.log("Email sent:", data);
                   alert("Email successfully sent")
-                  window.location.replace(`http://140.238.215.73:8000/api/pdf/navigation`);
+                  window.location.replace(`http://0.0.0.0:8001/api/pdf/navigation`);
 
-                    // window.location.replace(`http://140.238.215.73:8000/api/pdf/preview/${data["id"]}`);
+                    // window.location.replace(`http://0.0.0.0:8001/api/pdf/preview/${data["id"]}`);
                 })
                 .catch(error => {
-                  window.location.replace(`http://140.238.215.73:8000/api/pdf/navigation`);
+                  window.location.replace(`http://0.0.0.0:8001/api/pdf/navigation`);
 
                   console.error("Error:", error);
                 });
 
       }
       function openMailApp() {
-            fetch(`http://140.238.215.73:8000/api/pdf/open-mail-inv/${inv_id}`, {
+            fetch(`http://0.0.0.0:8001/api/pdf/open-mail-inv/${inv_id}`, {
                     method: 'GET',
                     headers: {
                         // Accept: 'application/pdf',
@@ -295,19 +295,19 @@
         }
 
         function goToInvoice() {
-        window.location.replace(`http://140.238.215.73:8000/api/pdf/create-doc`);
+        window.location.replace(`http://0.0.0.0:8001/api/pdf/create-doc`);
       }
       function goToAdmin() {
-        window.location.replace(`http://140.238.215.73:8000/api/pdf/admin`);
+        window.location.replace(`http://0.0.0.0:8001/api/pdf/admin`);
       }
       function goToInvoiceList() {
-        window.location.replace(`http://140.238.215.73:8000/api/pdf/invoice-list`);
+        window.location.replace(`http://0.0.0.0:8001/api/pdf/invoice-list`);
       }
       function createTta() {
-        window.location.replace(`http://140.238.215.73:8000/api/pdf/tta-create`);
+        window.location.replace(`http://0.0.0.0:8001/api/pdf/tta-create`);
       }
       function goToTtaist() {
-        window.location.replace(`http://140.238.215.73:8000/api/pdf/tta-list`);
+        window.location.replace(`http://0.0.0.0:8001/api/pdf/tta-list`);
       }
     </script>
 </body>

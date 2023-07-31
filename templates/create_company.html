@@ -89,7 +89,7 @@
         address: address,
         location: location,
       };
-      fetch("http://140.238.215.73:8000/api/pdf/create-company", {
+      fetch("http://0.0.0.0:8001/api/pdf/create-company", {
           method: "POST",
           headers: {
             'Accept': 'application/json',
@@ -105,7 +105,7 @@
           console.error("Error:", error);
         });
 
-        window.location.replace("http://140.238.215.73:8000/api/pdf/create-project");
+        window.location.replace("http://0.0.0.0:8001/api/pdf/create-project");
     });
 
   </script>
