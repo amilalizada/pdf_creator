@@ -7,7 +7,7 @@ created_at bigint,
 is_admin bool)
 
 
-create table company (
+create table companies (
 id int auto_increment primary key,
 name varchar(50),
 email varchar(50),

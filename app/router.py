@@ -90,7 +90,7 @@ def create_user(request: Request, data: CreateUserInput, token: str = Depends(oa
     if user:  
         return Response(status_code=status.HTTP_400_BAD_REQUEST)
     
-    hashed_password = hashlib.sha256(data.password.encode()).hexdigest()
+    hashed_password = hashlib.sha256(data.password.encode()).hexdigest() 
     user = User.create(
         full_name=data.fullname.strip(),
         email=data.email.strip(),
@@ -108,6 +108,12 @@ def create_user_get(request: Request):
 
 @router.post("/create-company")
 def create_comp(data: CreateCompanyInputSchema, token: str = Depends(oauth2_scheme)):
+    admin = jwt_check(token)
+    if not admin:
+        return JSONResponse(status_code=403, content={"error": "You don't have permission for this action"})
+    user = User.select().where(User.email == admin["email"])
+    if user:  
+        return Response(status_code=status.HTTP_400_BAD_REQUEST)
     Company.create(
         name=data.name.strip(),
         address=data.address.strip(),
@@ -126,6 +132,12 @@ def create_comp_get(request: Request):
 
 @router.post("/create-project")
 def create_proj(data: CreateProjectInputSchema, token: str = Depends(oauth2_scheme)):
+    admin = jwt_check(token)
+    if not admin:
+        return JSONResponse(status_code=403, content={"error": "You don't have permission for this action"})
+    user = User.select().where(User.email == data.email)
+    if user:  
+        return Response(status_code=status.HTTP_400_BAD_REQUEST)
     Project.create(
         name=data.name.strip(),
         comp_id=int(data.comp_id),
@@ -144,6 +156,7 @@ def create_proj_get(request: Request):
 
 @router.get("/create-doc")
 def create_doc(request: Request):
+    
     last_inv = PdfData.select(PdfData.data)
     if last_inv:
         last_inv = list(last_inv)[0]
@@ -163,6 +176,9 @@ def get_projects(comp_id: int, request: Request):
 
 @router.post("/convert-invoice")
 def convert_pdf(data: ConvertInvoiceInputSchema, request: Request, token: str = Depends(oauth2_scheme)):
+    admin = jwt_check(token)
+    if not admin:
+        return JSONResponse(status_code=403, content={"error": "You don't have permission for this action"})
     company = list(Company.select().where(Company.id == data.comp_id).dicts())[0]
     project = list(Project.select().where(Project.id == data.proj_id).dicts())[0]
     
