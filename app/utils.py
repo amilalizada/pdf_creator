@@ -244,8 +244,8 @@ def get_html_string():
     </div>
 
 
-    <div style="height: 40px;" class="mt-5">
-      <img style="padding-left: 25px; margin-left: 50px'" src="/app/static/sign.png" alt="Image">
+    <div style="height: 200px; width: 200px;" class="mt-5">
+      <img style="padding-left: 25px; margin-left: 50px; width: 100%; height: 100%;" src="/app/static/sign.png" alt="Image">
     </div>
 
 </body>
