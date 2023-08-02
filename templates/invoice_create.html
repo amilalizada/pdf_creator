@@ -91,6 +91,12 @@
 </head>
 
 <body>
+    <script>
+        if ( ! localStorage.getItem("access_token")){
+            console.log("heree");
+            window.location.replace(`http://0.0.0.0:8001/api/pdf/login`)
+        }
+    </script>
     <button
         style="margin-left: 0px; height: 30px; background-color: #4CAF50; cursor: pointer; color: white; border-radius: 5px; border: none;"
         onclick="main()">Back to Main</button>
