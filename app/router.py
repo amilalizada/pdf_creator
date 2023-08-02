@@ -156,10 +156,10 @@ def create_proj_get(request: Request):
 @router.get("/create-doc")
 def create_doc(request: Request):
     
-    last_inv = PdfData.select(PdfData.data)
+    last_inv = PdfData.select(PdfData.data).order_by(PdfData.desc())
     if last_inv:
         last_inv = list(last_inv)[0]
-        last_inv = json.loads(last_inv.data)["invoice_id"]
+        last_inv = json.loads(last_inv.data)["invoice_id"] + 1
     else:
         last_inv = 1
 
@@ -190,7 +190,7 @@ def convert_pdf(data: ConvertInvoiceInputSchema, request: Request, token: str = 
         "project_name": project["name"],
         "project_currency": project["currency"],
         "desciptions": data.descriptions,
-        "invoice_id": int(data.invoice_id) + 1,
+        "invoice_id": int(data.invoice_id),
         "date": data.date,
         "due_date": data.due_date
     }
