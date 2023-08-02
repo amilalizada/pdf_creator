@@ -8,16 +8,19 @@ from jose import jwt, JWTError
 
 
 def jwt_check(token: str):
-    try:
-        payload = jwt.decode(token, "my-secret", algorithms=["HS256"])
-        email = payload.get("sub")
-        is_admin = payload.get("is_admin")
-        if email is None:
+    if token:
+        try:
+            payload = jwt.decode(token, "my-secret", algorithms=["HS256"])
+            email = payload.get("sub")
+            is_admin = payload.get("is_admin")
+            if email is None:
+                raise HTTPException(status_code=401, detail="Invalid authentication token")
+        except JWTError:
             raise HTTPException(status_code=401, detail="Invalid authentication token")
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid authentication token")
-    
-    return is_admin
+    else:
+        return HTTPException(status_code=401, detail="Invalid authentication token")
+
+    return {"is_admin": is_admin, "email": email}
 
 
 def create_access_token(data: dict, expires_delta: timedelta):
