@@ -88,6 +88,7 @@ data text,
 comp_id int,
 contract_id int,
 create_date varchar(50),
+created_at bigint,
 foreign key (comp_id) references companies(id) on delete cascade,
 foreign key (contract_id) references contracts(id) on delete cascade
 )
