@@ -154,7 +154,7 @@ def create_proj_get(request: Request):
 @router.get("/create-doc")
 def create_doc(request: Request):
     
-    last_inv = PdfData.select(PdfData.data).order_by(PdfData.desc())
+    last_inv = PdfData.select(PdfData.data).order_by(PdfData.id.desc())
     if last_inv:
         last_inv = list(last_inv)[0]
         last_inv = json.loads(last_inv.data)["invoice_id"] + 1
