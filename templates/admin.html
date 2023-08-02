@@ -87,6 +87,12 @@
 </head>
 
 <body>
+    <script>
+        if ( ! localStorage.getItem("access_token")){
+            console.log("heree");
+            window.location.replace(`http://0.0.0.0:8001/api/pdf/login`)
+        }
+    </script>
     <div style="display: flex;">
         <h1>Admin Panel</h1>
         <button style="margin-left: 50px; height: 30px; margin-top: 20px;background-color: #4CAF50;
@@ -308,10 +314,10 @@
                     },
                     body: JSON.stringify(proj)
                 })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("User created successfully:", data);
-                })
+                // .then(response => response.json())
+                // .then(data => {
+                //     console.log("User created successfully:", data);
+                // })
                 .catch(error => {
                     console.error("Error:", error);
                 });

@@ -135,9 +135,8 @@ def create_proj(data: CreateProjectInputSchema, token: str = Depends(oauth2_sche
     admin = jwt_check(token)
     if not admin:
         return JSONResponse(status_code=403, content={"error": "You don't have permission for this action"})
-    user = User.select().where(User.email == data.email)
-    if user:  
-        return Response(status_code=status.HTTP_400_BAD_REQUEST)
+    user = User.select().where(User.email == admin["email"])
+    
     Project.create(
         name=data.name.strip(),
         comp_id=int(data.comp_id),

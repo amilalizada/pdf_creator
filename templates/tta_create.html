@@ -67,6 +67,12 @@
 </head>
 
 <body>
+    <script>
+        if ( ! localStorage.getItem("access_token")){
+            console.log("heree");
+            window.location.replace(`http://0.0.0.0:8001/api/pdf/login`)
+        }
+    </script>
     <div class="form-container mt-5">
         <form class="d-flex justify-content-around">
             <div class="col-4">
