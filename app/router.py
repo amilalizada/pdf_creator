@@ -112,8 +112,6 @@ def create_comp(data: CreateCompanyInputSchema, token: str = Depends(oauth2_sche
     if not admin:
         return JSONResponse(status_code=403, content={"error": "You don't have permission for this action"})
     user = User.select().where(User.email == admin["email"])
-    if user:  
-        return Response(status_code=status.HTTP_400_BAD_REQUEST)
     Company.create(
         name=data.name.strip(),
         address=data.address.strip(),
