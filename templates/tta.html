@@ -54,7 +54,7 @@
 
 <body>
     <script>
-        if ( ! localStorage.getItem("access_token")){
+        if (localStorage.getItem("access_token") == 'undefined' || localStorage.getItem("access_token") == null){
             console.log("heree");
             window.location.replace(`http://140.238.215.73:8000/api/pdf/login`)
         }
