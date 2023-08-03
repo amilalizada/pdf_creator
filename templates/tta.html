@@ -141,7 +141,7 @@
                 <th style="text-align: center ;">Ölçü vahidi</th>
                 <th style="text-align: center ;">
                     Bir vahidinin
-                    {% if data.currency == 'usd' %}
+                    {% if data.cur_icon_2 == 'usd' %}
                     (ABŞ dolları)
                     {% else  %}
                     (Manat)
@@ -149,7 +149,7 @@
                 </th>
                 <th style="text-align: center ;">
                     Ümumi dəyəri
-                    {% if data.currency == 'usd' %}
+                    {% if data.cur_icon_2 == 'usd' %}
                     (ABŞ dolları)
                     {% else  %}
                     (Manat)
@@ -163,8 +163,8 @@
                 <td style="text-align: left;">{{desc.service}}</td>
                 <td style="text-align: center;">{{desc.qty}}</td>
                 <td style="text-align: center;">{{desc.unit_of_meas}}</td>
-                <td style="text-align: right;">{{data.cur_icon}}{{desc.price_one}}</td>
-                <td style="text-align: right;">{{data.cur_icon}}{{desc.total_price}}</td>
+                <td style="text-align: right;">{{data.cur_icon_2}}{{desc.price_one}}</td>
+                <td style="text-align: right;">{{data.cur_icon_2}}{{desc.total_price}}</td>
             </tr>
             {% endfor %}
         </table>
@@ -172,17 +172,17 @@
             <tr style="height: 25px; background-color: white;">
                 <th style="width: 28px;"></th>
                 <th style="text-align: right;">Cəmi</th>
-                <th style="width: 70px; text-align: right ;">{{data.cur_icon}}{{data.final}}</th>
+                <th style="width: 70px; text-align: right ;">{{data.cur_icon_2}}{{data.final}}</th>
             </tr>
             <tr style="height: 25px; background-color: white;">
                 <th style="width: 29px;"></th>
                 <th style="text-align: right;">Əlavə dəyər vergisi(18%):</th>
-                <th style="width: 70px; text-align: right ;">{{data.cur_icon}}{{data.vat}}</th>
+                <th style="width: 70px; text-align: right ;">{{data.cur_icon_2}}{{data.vat}}</th>
             </tr>
             <tr style="height: 25px; background-color: white;">
                 <th style="width: 29px;"></th>
                 <th style="text-align: right;">ÜMUMI MƏBLƏG</th>
-                <th style="width: 185px; text-align: right ;">{{data.cur_icon}}{{data.total}}</th>
+                <th style="width: 185px; text-align: right ;">{{data.cur_icon_2}}{{data.total}}</th>
             </tr>
         </table>
 

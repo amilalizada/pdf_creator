@@ -212,11 +212,19 @@ async def preview(id: int, request: Request):
     pdf_data = json.loads(pdf_data["data"])
     pdf_data["date"] = pdf_data["date"].replace("-", "/")
     pdf_data["due_date"] = pdf_data["due_date"].replace("-", "/")
-    currency = "₼"
     if proje["currency"] == "usd":
         currency = "$"
-    pdf_data["currency"] =  proje["currency"]
-    pdf_data["cur_icon"] = currency
+        currency_icon = "$"
+        currecny_icon_2 = "$"
+    else:
+        currency = "₼"
+        currency_icon_2 = '<img src="/app/static/az_curr.svg" width="20px" height="20px">'
+        currency_icon = '<img src="/app/static/Azeri_manat_symbol.svg" width="10px" height="10px">'
+    pdf_data["currency_2"] = currency
+    pdf_data["currency"] = currency
+    pdf_data["cur_icon"] = currency_icon
+    pdf_data["cur_icon2"] = currency_icon_2
+
     pdf_data["tax_id"] = company["tax_id"]
     final = 0
     for i in pdf_data["desciptions"]:
@@ -410,7 +418,11 @@ async def prew_tta(c_id: int, request: Request):
     vat = final * 18 / 100
     cur_icon = "₼"
     if data["currency"] == "usd":
+        currency = "$"
         cur_icon = "$"
+    else:
+        currency = "₼"
+        cur_icon = '<img src="/app/static/Azeri_manat_symbol.svg" width="10px" height="10px">'
     doc_data = {
         "id": c_id,
         "company_name": company["name"],
@@ -427,6 +439,7 @@ async def prew_tta(c_id: int, request: Request):
         "final": total,
         "total": round(final + vat, 2),
         "cur_icon": cur_icon,
+        "cur_icon_2": currency
     }
     options = {
         "page-size": "A4",
@@ -439,10 +452,12 @@ async def prew_tta(c_id: int, request: Request):
     }
     html_string = get_tta_html_string()
     html_template = Template(html_string)
-    rendered_html = html_template.render(data=doc_data, options=options)
+    rendered_html = html_template.render(data=doc_data)
+    print(rendered_html)
     wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
 
     await convert_to_pdf(rendered_html, f"tta{c_id}.pdf", wkhtmltopdf_path, options)
+    print(doc_data["descs"])
     # doc_file = f"tta_doc_{c_id}.docx"
     # await convert_pdf_to_doc(f"tta{c_id}.pdf", doc_file)
 
