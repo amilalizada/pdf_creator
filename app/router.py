@@ -112,8 +112,6 @@ def create_comp(data: CreateCompanyInputSchema, token: str = Depends(oauth2_sche
     if not admin:
         return JSONResponse(status_code=403, content={"error": "You don't have permission for this action"})
     user = User.select().where(User.email == admin["email"])
-    if user:  
-        return Response(status_code=status.HTTP_400_BAD_REQUEST)
     Company.create(
         name=data.name.strip(),
         address=data.address.strip(),
@@ -156,10 +154,10 @@ def create_proj_get(request: Request):
 @router.get("/create-doc")
 def create_doc(request: Request):
     
-    last_inv = PdfData.select(PdfData.data)
+    last_inv = PdfData.select(PdfData.data).order_by(PdfData.id.desc())
     if last_inv:
         last_inv = list(last_inv)[0]
-        last_inv = json.loads(last_inv.data)["invoice_id"]
+        last_inv = json.loads(last_inv.data)["invoice_id"] + 1
     else:
         last_inv = 1
 
@@ -190,7 +188,7 @@ def convert_pdf(data: ConvertInvoiceInputSchema, request: Request, token: str = 
         "project_name": project["name"],
         "project_currency": project["currency"],
         "desciptions": data.descriptions,
-        "invoice_id": int(data.invoice_id) + 1,
+        "invoice_id": int(data.invoice_id),
         "date": data.date,
         "due_date": data.due_date
     }
@@ -214,11 +212,19 @@ async def preview(id: int, request: Request):
     pdf_data = json.loads(pdf_data["data"])
     pdf_data["date"] = pdf_data["date"].replace("-", "/")
     pdf_data["due_date"] = pdf_data["due_date"].replace("-", "/")
-    currency = "₼"
     if proje["currency"] == "usd":
         currency = "$"
-    pdf_data["currency"] =  proje["currency"]
-    pdf_data["cur_icon"] = currency
+        currency_icon = "$"
+        currecny_icon_2 = "$"
+    else:
+        currency = "₼"
+        currency_icon_2 = '<img src="/app/static/az_curr.svg" width="20px" height="20px">'
+        currency_icon = '<img src="/app/static/Azeri_manat_symbol.svg" width="10px" height="10px">'
+    pdf_data["currency_2"] = currency
+    pdf_data["currency"] = currency
+    pdf_data["cur_icon"] = currency_icon
+    pdf_data["cur_icon2"] = currency_icon_2
+
     pdf_data["tax_id"] = company["tax_id"]
     final = 0
     for i in pdf_data["desciptions"]:
@@ -412,7 +418,11 @@ async def prew_tta(c_id: int, request: Request):
     vat = final * 18 / 100
     cur_icon = "₼"
     if data["currency"] == "usd":
+        currency = "$"
         cur_icon = "$"
+    else:
+        currency = "₼"
+        cur_icon = '<img src="/app/static/Azeri_manat_symbol.svg" width="10px" height="10px">'
     doc_data = {
         "id": c_id,
         "company_name": company["name"],
@@ -429,6 +439,7 @@ async def prew_tta(c_id: int, request: Request):
         "final": total,
         "total": round(final + vat, 2),
         "cur_icon": cur_icon,
+        "cur_icon_2": currency
     }
     options = {
         "page-size": "A4",
@@ -441,10 +452,12 @@ async def prew_tta(c_id: int, request: Request):
     }
     html_string = get_tta_html_string()
     html_template = Template(html_string)
-    rendered_html = html_template.render(data=doc_data, options=options)
+    rendered_html = html_template.render(data=doc_data)
+    print(rendered_html)
     wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
 
     await convert_to_pdf(rendered_html, f"tta{c_id}.pdf", wkhtmltopdf_path, options)
+    print(doc_data["descs"])
     # doc_file = f"tta_doc_{c_id}.docx"
     # await convert_pdf_to_doc(f"tta{c_id}.pdf", doc_file)
 
@@ -513,5 +526,3 @@ def open_mail_app(id: int):
         return "Default mail app opened successfully."
     except FileNotFoundError:
         return "Default mail app not found."
-
-
