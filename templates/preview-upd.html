@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <!-- <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet'>
+  <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'> -->
+<style>
+  table {
+    /* font-family: arial, sans-serif; */
+    width: 98%;
+    border: none;
+    margin-left: 27px;
+  }
+  .orb{
+    font-family: 'Orbitron';
+  }
+  span{
+    font-family: 'Montserrat';
+  }
+  li{
+    font-family: 'Montserrat'
+  }
+  tbody {
+    padding-left: 35px;
+  }
+
+  td,
+  th {
+    /* border: 1px solid #dddddd; */
+    text-align: left;
+    padding: 6px;
+    /* padding-left: 35px; */
+    text-align: right;
+
+  }
+
+  .th-head {
+    color: #283592;
+  }
+
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
+
+  .ccontainer {
+    text-align: center;
+  }
+    
+    .button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+</style>
+
+<body>
+  <script>
+    if ( ! localStorage.getItem("access_token")){
+        console.log("heree");
+        window.location.replace(`http://140.238.215.73:8000/api/pdf/login`)
+    }
+</script>
+  <!-- <div class="ccontainer">
+    <button onclick="goToAdmin()" class="button">Admin</button>
+    <button onclick="goToInvoice()" class="button">Create Invoice</button>
+    <button onclick="createTta()" class="button">Create TTH</button>
+    <button onclick="goToInvoiceList()" class="button">Invoice PDF List</button>
+</div> -->
+  <input id="hidden" value="{{data.comp_id}}" type="hidden">
+  <div style="height: 8px; width: 60%; margin: auto;
+    background-color: #283592" class="horizontal-line"></div>
+  <div style="width: 80%; margin: auto;" class="container">
+
+    <section class="invoice-section">
+      <header style="padding: 0;">
+        <!-- <h1 style="margin-left: 10px;
+        width: 300px;
+        color: #6d64e8; font-family: sans-serif; margin-top: 40px;" class="company-name">JLTECH LLC</h1> -->
+
+        <div style="padding: 0;" class="company-info d-flex justify-content-between mt-5">
+          <ul style="list-style: none;" class="address-info">
+            <li style="margin-left: 10px;
+            width: 300px;
+            color: #6d64e8; font-family: 'Orbitron'; height: 40px; font-size: 30px;" class="company-name p-0 m-0">
+              JLTECH LLC</li>
+            <li>AGA Business Center 12th floor</li>
+            <li>Khojali Ave 55, Baku, Azerbaijan AZ 1001</li>
+            <li>(051) 450-00-15</li>
+          </ul>
+
+          <ul style="list-style: none;" class="bank-info flex-end">
+            <li style="color: #6d64e8;">Tax ID: 2004130131</li>
+            <li style="color: #6d64e8;">IBAN: AZ76PAHA40060AZNHC0100164830</li>
+            <li>Bank: «PAŞA Bank» ASC</li>
+            <li>S.W.I.F.T BIC: PAHAAZ22</li>
+            <li>Bank Code: 505141</li>
+            <li>TAX ID: 1700767721</li>
+            <li>Acc: AZ82NABZ01350100000000071944</li>
+          </ul>
+        </div>
+      </header>
+
+      <main style="padding-left: 35px;">
+        <div class="d-flex flex-column">
+          <span style="color: #283592; font-size: 60px;" class="invoice-title orb">Invoice</span>
+          <span style="color: #e01b84; font-size: 25px;" class="invoice-date orb">{{data.date}}</span>
+        </div>
+        
+
+        <section class="invoice-details row">
+          <div class="d-flex flex-column col-4">
+            <h1 class="invoice-label">Invoice for</h1>
+            <ul style="list-style: none;" class="invoice-address p-0">
+              <li>{{data.company_name}}</li>
+              <li>{{data.company_address}}</li>
+              <li>{{data.company_location}}</li>
+            </ul>
+          </div>
+
+          <div class="d-flex flex-column col-4">
+            <div class="mb-5">
+              <h4 class="invoice-label orb">Payable to</h4>
+              <span class="invoice-recipient orb">JLTECH LLC</span>
+            </div>
+            <div class="invoice-project">
+              <h4 class="invoice-label orb">Project</h4>
+              <span class="invoice-project-name">{{data.project_name}}</span>
+            </div>
+
+          </div>
+
+          <div class="d-flex flex-column col-4">
+
+            <div class="">
+              <h4 class="invoice-label">Invoice #</h4>
+              <span id="invoice_id" class="invoice-number">{{data.invoice_id}}</span>
+            </div>
+
+            <div>
+              <h4 class="invoice-label mt-5 orb">Due date</h4>
+              <span class="invoice-due-date">{{data.due_date}}</span>
+            </div>
+          </div>
+          <div class="col-3"></div>
+
+        </section>
+
+        <hr class="invoice-divider" />
+
+      </main>
+      <table style="border: none;">
+        <tr style="padding-left: 35px;">
+          <th class="th-head orb" style="text-align: left;">Description</th>
+          <th class="th-head orb">Qty</th>
+          <th class="th-head orb">Unit price</th>
+          <th class="th-head orb">Total price</th>
+
+        </tr>
+        {% for desc in data.desciptions %}
+        <tr>
+          <td style="text-align: left;" class="desc">{{desc.description}}</td>
+          <td>{{desc.qty}}</td>
+          <td>{{data.currency}}{{desc.unitprice}}</td>
+          <td>{{data.currency}}{{desc.total_price}}</td>
+          {% endfor %}
+
+        </tr>
+
+      </table>
+    </section>
+
+    <!-- <hr style="padding-left: 35px; width: 1020px;" class="invoice-divider" /> -->
+    <!-- <div style="height: 2px; width: 90%; padding-left: 35px; background-color: #dddddd;" class="devider"></div> -->
+    <div style="border-top: 2px solid rgba(0,0,0,.1); width: 1087px; margin: auto;"
+      class="d-flex justify-content-between mt-4 mr-0">
+      <div style="width: 200px;" class="note mt-3">
+        <span style="margin-left: 15px;" class="notes-label col-6">Notes:</span>
+      </div>
+      <!-- margin-left: 700px; width: 350px; -->
+      <div style="width: 280px;" class="totals mt-3">
+        <div class="text-right">
+          <div class="d-flex justify-content-between">
+            <p style="color: #6d64e8;" class="summary-label">Subtotal</p>
+            <span class="summary-value">{{data.currency}}{{data.total}}</span>
+          </div>
+
+        </div>
+        <div class="text-right">
+          <div class="d-flex text-right justify-content-between">
+
+            <p style="text-align: right; width: 60px; color: #6d64e8;" class="summary-label">VAT</p>
+            <span class="summary-value">{{data.currency}}{{data.vat}}</span>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+    <div style="height: 40px;" class="total d-flex justify-content-end">
+      <span style="color: #e01b84; font-family: sans-serif; font-size: 30px;"> {{data.currency}}{{data.final_amount}}</span>
+    </div>
+
+    <div style="height: 40px;" class="mt-5">
+      <img src="/static/sign.png" alt="Image">
+    </div>
+
+    <!-- <button onclick="donwload()" type="button">Download Created PDF</button>
+    <button onclick="openMailApp()">Open Mail App</button> -->
+    <!-- <button onclick="sendEmail()" type="button">Send file to selected company email</button> -->
+
+    <script>
+      function donwload() {
+        const inv_id = document.getElementById('invoice_id').innerText;
+        var inpArr = []
+
+        fetch(`http://140.238.215.73:8000/api/pdf/download/${inv_id}`, {
+            method: 'GET',
+            headers: {
+              // Accept: 'application/pdf',
+              'Content-Type': 'application/pdf'
+            },
+          })
+          .then(response => response.blob())
+          .then(blob => {
+            const pdfUrl = URL.createObjectURL(blob);
+
+            // Create an anchor element
+            const link = document.createElement('a');
+            link.href = pdfUrl;
+            link.download = 'invoice.pdf'; // Specify the desired filename
+
+            // Simulate a click event to trigger the download
+            link.dispatchEvent(new MouseEvent('click'));
+
+            // Clean up the URL object
+            URL.revokeObjectURL(pdfUrl);
+          })
+          .catch(error => {
+            console.error("Error:", error);
+          });
+      }
+      const inv_id = document.getElementById('invoice_id').innerText;
+
+      function sendEmail() {
+        const inv_id = document.getElementById('invoice_id').innerText;
+        const comp_id = document.getElementById('hidden').value;
+        console.log(document.getElementById('hidden'));
+      
+
+        body = {
+          "inv_id": inv_id,
+          comp_id: comp_id
+        }
+        fetch("http://140.238.215.73:8000/api/pdf/send-email", {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Email sent:", data);
+                  alert("Email successfully sent")
+                  window.location.replace(`http://140.238.215.73:8000/api/pdf/navigation`);
+
+                    // window.location.replace(`http://140.238.215.73:8000/api/pdf/preview/${data["id"]}`);
+                })
+                .catch(error => {
+                  window.location.replace(`http://140.238.215.73:8000/api/pdf/navigation`);
+
+                  console.error("Error:", error);
+                });
+
+      }
+      function openMailApp() {
+            fetch(`http://140.238.215.73:8000/api/pdf/open-mail-inv/${inv_id}`, {
+                    method: 'GET',
+                    headers: {
+                        // Accept: 'application/pdf',
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then(response => response.json())
+                .then(response => {
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+        }
+
+        function goToInvoice() {
+        window.location.replace(`http://140.238.215.73:8000/api/pdf/create-doc`);
+      }
+      function goToAdmin() {
+        window.location.replace(`http://140.238.215.73:8000/api/pdf/admin`);
+      }
+      function goToInvoiceList() {
+        window.location.replace(`http://140.238.215.73:8000/api/pdf/invoice-list`);
+      }
+      function createTta() {
+        window.location.replace(`http://140.238.215.73:8000/api/pdf/tta-create`);
+      }
+      function goToTtaist() {
+        window.location.replace(`http://140.238.215.73:8000/api/pdf/tta-list`);
+      }
+    </script>
+</body>
+
+</html>

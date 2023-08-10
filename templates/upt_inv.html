@@ -4,7 +4,7 @@
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
 <head>
-    <title>Create Invoice</title>
+    <title>Update Invoice</title>
     <style>
         #myTable {
             width: 100%;
@@ -92,13 +92,18 @@
 
 <body>
     <script>
-        if (localStorage.getItem("access_token") == 'undefined' || localStorage.getItem("access_token") == null){
+        if ( ! localStorage.getItem("access_token")){
             console.log("heree");
-            window.location.replace(`http://140.238.215.73:8000/api/pdf/login`)
+            window.location.replace(`http://0.0.0.0:8001/api/pdf/login`)
         }
+        // var currentUrl = window.location.href;
+        // var parts = currentUrl.split("/");
+        // var id = parts[parts.length - 1];
+        // var url_2 = "http://0.0.0.0:8001/api/pdf/preview-upd/" + id; // Replace with your actual preview URL
+        // window.open(url_2, "_blank");
     </script>
     <button
-        style="margin-left: 0px; height: 30px; background-color: #4CAF50; cursor: pointer; color: white; border-radius: 5px; border: none;"
+        style="margin-left: 0px; height: 30px; background-color: #5499b9; cursor: pointer; color: white; border-radius: 5px; border: none;"
         onclick="main()">Back to Main</button>
 
     <form style="width: 80%;" id="form" class="mt-5">
@@ -106,32 +111,32 @@
             <div class="col-4">
                 <label for="companySelect">Select Company:</label>
                 <select id="companySelect" name="companySelect">
-                    <option value="0">Companies</option>
     
-                    {% for comp in companies %}
-                    <option value="{{comp.id}}">{{comp.name}}</option>
-                    {% endfor %}
+                    <!-- {% for comp in companies %} -->
+                    <option value="{{company.id}}">{{company.name}}</option>
+                    <!-- {% endfor %} -->
                     <!-- Add more options dynamically based on available companies -->
                 </select>
     
                 <label for="projectSelect">Select Project:</label>
                 <select id="projectSelect" name="projectSelect">
-    
+                    <option value="{{project.id}}">{{project.name}}</option>
                     <!-- Add more options dynamically based on available projects -->
                 </select>
     
             </div>
+            
             <div class="col-4">
                 <label for="startDate">Date:</label>
-                <input type="date" id="startDate" name="startDate">
+                <input type="date" id="startDate" value="{{date}}" name="startDate">
     
                 <label for="endDate">Due Date:</label>
-                <input type="date" id="endDate" name="endDate">
+                <input type="date" id="endDate" value="{{due_date}}" name="endDate">
             </div>
             
             <div class="col-4">
                 <label for="invoiceId">Invoice ID:</label>
-            <input type="number" id="invoiceId" value="{{inv_id}}" name="invoiceId" placeholder="Enter invoice ID">
+            <input type="number" id="invoiceId" value="{{data.invoice_id}}" name="invoiceId" placeholder="Enter invoice ID">
             </div>
             
         </div>
@@ -165,12 +170,14 @@
                 </tr>
             </thead>
             <tbody>
+                {% for desc in data.data %}
                 <tr class="desc">
-                    <td id="description"><input style="width: 100%;" type="text"></td>
-                    <td id="quantity"><input style="width: 90%;" type="number"></td>
-                    <td id="unitprice"><input style="width: 90%;" type="number"></td>
+                    <td id="description"><input value="{{desc.description}}" style="width: 100%;" type="text"></td>
+                    <td id="quantity"><input value="{{desc.qty}}" style="width: 90%;" type="number"></td>
+                    <td id="unitprice"><input value="{{desc.unitprice}}" style="width: 90%;" type="number"></td>
                     <td><span class="delete-icon">&#128465;</span></td>
                 </tr>
+                {% endfor %}
                 <!-- Add more rows as needed -->
             </tbody>
         </table>
@@ -183,7 +190,7 @@
 
     <!-- <button type="button" id="addSectionButton">Add Section</button> -->
 
-    <input onclick="createPdf()" id="create_doc" type="submit" value="Create Invoice">
+    <input onclick="createPdf()" id="create_doc" type="submit" value="Update Invoice">
 
     <script>
         function main() {
@@ -303,9 +310,12 @@
                 invoice_id: invoice,
                 descriptions: inpArr
             };
-
-            fetch("http://0.0.0.0:8001/api/pdf/convert-invoice", {
-                    method: 'POST',
+            var currentUrl = window.location.href;
+            var parts = currentUrl.split("/");
+            var id = parts[parts.length - 1];
+            id = parseInt(id)
+            fetch(`http://0.0.0.0:8001/api/pdf/update-invoice/${id}`, {
+                    method: 'PUT',
                     headers: {
                         
                         'Authorization': `Bearer ${localStorage.getItem("access_token")}`,

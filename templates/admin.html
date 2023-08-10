@@ -255,7 +255,7 @@
 
     <script>
         function main() {
-            window.location.replace(`http://140.238.215.73:8000/api/pdf/navigation`);
+            window.location.replace(`http://0.0.0.0:8001/api/pdf/navigation`);
         }
         document.getElementById("create_company").addEventListener("click", function (event) {
             event.preventDefault()
@@ -270,7 +270,7 @@
                 location: location,
                 tax_id: tax_id
             };
-            fetch("http://140.238.215.73:8000/api/pdf/create-company", {
+            fetch("http://0.0.0.0:8001/api/pdf/create-company", {
                     method: "POST",
                     headers: {
                         'Accept': 'application/json',
@@ -305,7 +305,7 @@
             };
             console.log(proj)
 
-            fetch("http://140.238.215.73:8000/api/pdf/create-project", {
+            fetch("http://0.0.0.0:8001/api/pdf/create-project", {
                     method: "POST",
                     headers: {
                         'Accept': 'application/json',
@@ -314,10 +314,10 @@
                     },
                     body: JSON.stringify(proj)
                 })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("User created successfully:", data);
-                })
+                // .then(response => response.json())
+                // .then(data => {
+                //     console.log("User created successfully:", data);
+                // })
                 .catch(error => {
                     console.error("Error:", error);
                 });
@@ -337,7 +337,7 @@
             };
             console.log(user)
             jwt = localStorage.getItem("access_token")
-            fetch("http://140.238.215.73:8000/api/pdf/create", {
+            fetch("http://0.0.0.0:8001/api/pdf/create", {
                     method: "POST",
                     headers: {
                         'Accept': 'application/json',
@@ -373,7 +373,7 @@
             };
             console.log(proj)
 
-            fetch("http://140.238.215.73:8000/api/pdf/tta-create", {
+            fetch("http://0.0.0.0:8001/api/pdf/tta-create", {
                     method: "POST",
                     headers: {
                         'Accept': 'application/json',
