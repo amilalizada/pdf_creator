@@ -76,24 +76,19 @@
     <div class="form-container mt-5">
         <form class="d-flex justify-content-around">
             <div class="col-4">
+                <label for="company">Company:</label>
                 <select id="companySelect" name="companySelect">
-                    <option value="0">Select</option>
 
-                    {% for comp in companies %}
-                    <option value="{{comp.id}}">{{comp.name}}</option>
-                    {% endfor %}
+                    <option value="{{company.id}}">{{company.name}}</option>
                     <!-- Add more options dynamically based on available companies -->
                 </select>
                 <label for="contract">Contract:</label>
                 <select id="contractSelect">
-                    <option value="0">Select</option>
-                    {% for con in contracts %}
-                    <option value="{{con.id}}">{{con.name}}</option>
-                    {% endfor %}
+                    <option value="{{contract.id}}">{{contract.name}}</option>
                 </select>
 
                 <label for="name">Name of director or smth:</label>
-                <input type="text" id="name" placeholder="Enter your name">
+                <input type="text" value="{{data.name}}" id="name" placeholder="Enter your name">
             </div>
             <div class="col-4>
         <label for=" currency">Currency:</label>
@@ -103,26 +98,30 @@
                 </select>
 
                 <label for="date">Date of TTA creation:</label>
-                <input type="date" id="date">
+                <input type="date" value="{{create_date}}" id="date">
 
                 <label for="position">Position name:</label>
-                <input type="text" id="position">
+                <input type="text" value="{{data.position}}" id="position">
             </div>
             <div class="col-4>
         <label for=" add">Contract addition (optional):</label>
                 <input type="text" id="additional">
                 <label for="po">PO (optional):</label>
+                {% if data.po %}
+                <input type="text" value="{{data.po}}" id="po">
+                {% else %}
                 <input type="text" id="po">
+                {% endif %}
             </div>
 
-
-
         </form>
+
 
     </div>
     <section class="mt-5" style="width: 80%; margin: auto;">
         <table id="myTable" style="margin: auto; width: 100%;">
             <thead>
+                
                 <tr>
                     <th style="width: 675px;">Xidmetin(lisenziyanin) adi</th>
                     <th>Sayi</th>
@@ -133,15 +132,17 @@
                 </tr>
             </thead>
             <tbody>
+                {% for desc in data.data %}
                 <tr class="desc">
-                    <td id="service"><input style="width: 100%;" type="text"></td>
-                    <td id="quantity"><input style="width: 90%;" type="number"></td>
-                    <td id="unit_of_measurement"><input style="width: 90%;" type="text"></td>
-                    <td id="price_of_one"><input style="width: 90%;" type="number"></td>
+                    <td id="service"><input style="width: 100%;" value="{{desc.service}}" type="text"></td>
+                    <td id="quantity"><input style="width: 90%;" value="{{desc.qty}}" type="number"></td>
+                    <td id="unit_of_measurement"><input style="width: 90%;" value="{{desc.unit_of_meas}}" type="text"></td>
+                    <td id="price_of_one"><input style="width: 90%;" value="{{desc.price_one}}" type="number"></td>
                     <!-- <td id="total_price"><input style="width: 90%;" type="number"></td> -->
 
                     <td><span class="delete-icon">&#128465;</span></td>
                 </tr>
+                {% endfor %}
                 <!-- Add more rows as needed -->
             </tbody>
         </table>
@@ -151,7 +152,7 @@
     cursor: pointer; border-radius: 5px; border: 1px" onclick="addRow()" type="button">Add Row</button>
     </section>
 
-    <input onclick="createPdf()" type="button" value="Submit">
+    <input onclick="createPdf()" type="button" value="Update">
 
     <script>
         function createPdf() {
@@ -196,7 +197,7 @@
                 // comp_id: comp_option,
                 contract_id: contract_option,
                 date: date,
-                comp_id: comp_id,
+                comp_id: parseInt(comp_option),
                 drc_name: drc_name,
                 currency: currOpt,
                 additional: additional,
@@ -205,9 +206,14 @@
                 position: position
             };
             console.log(body);
+            var currentUrl = window.location.href;
+            var parts = currentUrl.split("/");
+            var id = parts[parts.length - 1];
+            console.log(id);
+            id = parseInt(id)
 
-            fetch("http://0.0.0.0:8001/api/pdf/tta-doc", {
-                    method: 'POST',
+            fetch(`http://0.0.0.0:8001/api/pdf/update-tta/${id}`, {
+                    method: 'PUT',
                     headers: {
                         Accept: 'application/json',
                         'Content-Type': 'application/json',
@@ -218,7 +224,7 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
-                    window.location.replace(`http://0.0.0.0:8001/api/pdf/tta-preview/${data["id"]}`)
+                    // window.location.replace(`http://0.0.0.0:8001/api/pdf/tta-preview/${data["id"]}`)
                 })
                 .catch(error => {
                     console.error("Error:", error);

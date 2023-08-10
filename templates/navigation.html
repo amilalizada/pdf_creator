@@ -39,23 +39,30 @@
         window.location.replace(`http://0.0.0.0:8001/api/pdf/login`)
     }
 </script>
-  <div style="width: 90%; margin: auto;" class="container-m text-center">
-    <h1>Welcome!</h1>
-    <div class="row mt-5 mb-4">
-      <dov class="col-6 text-center"><button onclick="goToAdmin()" class="button">Admin</button></dov>
-      <dov class="col-6 text-center"><button onclick="goToInvoice()" class="button">Create Invoice</button></dov>
+  <div class="container row">
+    <div class="logo col-6">
+      <img src="/static/Joint-Logic-Technologies-Logo-with-Tagline.png" width="500px" alt="" srcset="">
     </div>
-    <div class="row mt-4">
-    
-    <div class="col-4"><button onclick="createTta()" class="button">Create TTH</button></div>
-    
-    <div class="col-4"><button onclick="goToInvoiceList()" class="button">Invoice PDF List</button></div>
-    
-    <div class="col-4"><button onclick="goToTtaist()" class="button">TTA PDF List</button></div>
-    </div>
-    
 
+    <div style=" margin: auto;" class="container-m col-6 text-center">
+      <h1>Welcome!</h1>
+      <div class="row mt-5 mb-4">
+        <div class="col-6 text-center"><button onclick="goToAdmin()" class="button">Admin</button></div>
+        <div class="col-6 text-center"><button onclick="goToInvoice()" class="button">Create Invoice</button></div>
+        <div class="col-6"><button onclick="createTta()" class="button">Create TTH</button></div>
+      
+      <div class="col-6"><button onclick="goToInvoiceList()" class="button">Invoice PDF List</button></div>
+      
+      <div class="col-6"><button onclick="goToTtaist()" class="button">TTA PDF List</button></div>
+      </div>
+      <div class="row mt-4">
+      
+      </div>
+      
+  
+    </div>
   </div>
+  
 
 
   <script>
