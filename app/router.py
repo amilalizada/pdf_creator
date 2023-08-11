@@ -366,7 +366,7 @@ async def preview(id: int, request: Request):
     pdf_data["final_amount"] = round(final + vat, 2)
     pdf_data["total"] = total
 
-    rinv_id = pdf_data["invoice_id"]
+    inv_id = pdf_data["invoice_id"]
     options = {
         "page-size": "Letter",
         "margin-top": "40mm",
