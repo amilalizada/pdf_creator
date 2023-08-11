@@ -508,7 +508,7 @@ async def preview(id: int, request: Request):
     # await convert_pdf_to_doc(f"tta{c_id}.pdf", doc_file)
 
     return templates.TemplateResponse(
-        "tta.html", {"request": request, "data": doc_data}
+        "tta_prev_upd.html", {"request": request, "data": doc_data}
     )
 
 @router.get("/download/{inv_id}")
