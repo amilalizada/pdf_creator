@@ -90,58 +90,7 @@
         </tbody>
       </table>
       <script>
-        function goToInvoice() {
-          window.location.replace(`http://140.238.215.73:8000/api/pdf/create-doc`);
-        }
-        function goToAdmin() {
-          window.location.replace(`http://140.238.215.73:8000/api/pdf/admin`);
-        }
-        function goToInvoiceList() {
-          window.location.replace(`http://140.238.215.73:8000/api/pdf/invoice-list`);
-        }
-  
-    </script>
-    if (!localStorage.getItem("access_token")) {
-      console.log("heree");
-      window.location.replace(`http://140.238.215.73:8000/api/pdf/login`)
-    }
-  </script>
-  <div class="container d-flex justify-content-around mt-3 mb-3">
-    <button onclick="goToAdmin()" class="button">Admin</button>
-    <button onclick="goToInvoice()" class="button">Create Invoice</button>
-    <button class="button">Create TTH</button>
-    <button onclick="goToInvoiceList()" class="button">Invoice PDF List</button>
-  </div>
-
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Company Name</th>
-        <th>Contract Name</th>
-        <th>Name</th>
-        <th>Currency</th>
-        <th>Create Date</th>
-        <th>Preview</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for doc in docs %}
-      <tr>
-        <td class="doc_id">{{doc.id}}</td>
-        <td>{{doc.comp_name}}</td>
-        <td>{{doc.contract}}</td>
-        <td>{{doc.name}}</td>
-        <td>{{doc.currency}}</td>
-        <td>{{doc.create_date}}</td>
-        <td><button class="preview_btn">preview</button></td>
-      </tr>
-      {% endfor %}
-      <!-- Add more rows as needed -->
-    </tbody>
-  </table>
-  <script>
-    function previewDocument(button) {
+        function previewDocument(button) {
       var row = button.closest("tr");
       var docId = row.querySelector(".doc_id").textContent;
       window.location.replace(`http://140.238.215.73:8000/api/pdf/update-tta/${docId}`);
@@ -157,19 +106,17 @@
 
       });
     });
-
-    function goToInvoice() {
-      window.location.replace(`http://140.238.215.73:8000/api/pdf/create-doc`);
-    }
-
-    function goToAdmin() {
-      window.location.replace(`http://140.238.215.73:8000/api/pdf/admin`);
-    }
-
-    function goToInvoiceList() {
-      window.location.replace(`http://140.238.215.73:8000/api/pdf/invoice-list`);
-    }
-  </script>
+        function goToInvoice() {
+          window.location.replace(`http://140.238.215.73:8000/api/pdf/create-doc`);
+        }
+        function goToAdmin() {
+          window.location.replace(`http://140.238.215.73:8000/api/pdf/admin`);
+        }
+        function goToInvoiceList() {
+          window.location.replace(`http://140.238.215.73:8000/api/pdf/invoice-list`);
+        }
+  
+    </script>
 </body>
 
 </html>
