@@ -96,7 +96,7 @@
       };
       console.log(user)
 
-      fetch("http://0.0.0.0:8001/api/pdf/create", {
+      fetch("http://140.238.215.73:8000/api/pdf/create", {
           method: "POST",
           headers: {
             'Accept': 'application/json',
@@ -112,7 +112,7 @@
           console.error("Error:", error);
         });
 
-        window.location.replace("http://0.0.0.0:8001/api/pdf/");
+        window.location.replace("http://140.238.215.73:8000/api/pdf/");
     });
 
   </script>

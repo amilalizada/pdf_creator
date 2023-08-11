@@ -187,7 +187,7 @@
 
     <script>
         function main() {
-            window.location.replace(`http://0.0.0.0:8001/api/pdf/navigation`);
+            window.location.replace(`http://140.238.215.73:8000/api/pdf/navigation`);
         }
         // var countOfDesc = prompt("Please enter count of descriptions first: ")
         // console.log(countOfDesc);
@@ -225,7 +225,7 @@
 
         const companies = document.getElementById('companySelect');
         const projects_select = document.getElementById('projectSelect');
-        fetch(`http://0.0.0.0:8001/api/pdf/list-comps`, {
+        fetch(`http://140.238.215.73:8000/api/pdf/list-comps`, {
                 method: 'GET',
                 headers: {
                     Accept: 'application/json',
@@ -251,7 +251,7 @@
             projects_select.innerHTML = '<option class="project" value="">Projects</option>'
             let option = e.target;
             comp_id = option.value
-            fetch(`http://0.0.0.0:8001/api/pdf/projects/${comp_id}`, {
+            fetch(`http://140.238.215.73:8000/api/pdf/projects/${comp_id}`, {
                     method: 'GET',
                     headers: {
                         Accept: 'application/json',
@@ -304,7 +304,7 @@
                 descriptions: inpArr
             };
 
-            fetch("http://0.0.0.0:8001/api/pdf/convert-invoice", {
+            fetch("http://140.238.215.73:8000/api/pdf/convert-invoice", {
                     method: 'POST',
                     headers: {
                         
@@ -316,7 +316,7 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log("User created successfully:", data);
-                    window.location.replace(`http://0.0.0.0:8001/api/pdf/preview/${data["id"]}`);
+                    window.location.replace(`http://140.238.215.73:8000/api/pdf/preview/${data["id"]}`);
                 })
                 .catch(error => {
                     console.error("Error:", error);

@@ -94,9 +94,9 @@
       var row = button.closest("tr");
       var docId = row.querySelector(".doc_id").textContent;
       alert("Previewing document with doc_id: " + parseInt(docId));
-      window.location.replace(`http://0.0.0.0:8001/api/pdf/update-invoice/${docId}`);
+      window.location.replace(`http://140.238.215.73:8000/api/pdf/update-invoice/${docId}`);
 
-      var url_2 = "http://0.0.0.0:8001/api/pdf/preview-upd/" + docId; // Replace with your actual preview URL
+      var url_2 = "http://140.238.215.73:8000/api/pdf/preview-upd/" + docId; // Replace with your actual preview URL
         window.open(url_2, "_blank");
       // You can replace the alert with your actual preview logic
     }

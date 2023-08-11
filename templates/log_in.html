@@ -107,10 +107,10 @@
           if (response.status === 401) {
             alert("Invalid username or password");
             check = true
-            redirect = "http://0.0.0.0:8001/api/pdf/login"
+            redirect = "http://140.238.215.73:8000/api/pdf/login"
           }
           else{
-            redirect = "http://0.0.0.0:8001/api/pdf/navigation"
+            redirect = "http://140.238.215.73:8000/api/pdf/navigation"
           }
           return response.json();
         })
