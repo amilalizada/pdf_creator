@@ -78,6 +78,9 @@
         // var url_2 = "http://140.238.215.73:8000/api/pdf/tta-preview-upd/" + id;
     </script>
     <div class="form-container mt-5">
+        <button
+        style="margin-left: 0px; height: 40px; background-color: #1eb0df; cursor: pointer; color: white; border-radius: 5px; border: none;"
+        onclick="main()">Back to Main</button>
         <form class="d-flex justify-content-around">
             <div class="col-4">
                 <label for="company">Company:</label>
@@ -151,14 +154,16 @@
             </tbody>
         </table>
 
-        <button class="mt-5 mb-5" style="background-color: #4CAF50;
-    color: white;
-    cursor: pointer; border-radius: 5px; border: 1px" onclick="addRow()" type="button">Add Row</button>
-    </section>
+        <button class="mt-5 mb-5" style="background-color: #1eb0df; width: 105px; height: 45px;
+        color: white;
+        cursor: pointer; border-radius: 5px; border: 1px" onclick="addRow()" type="button">Add Row</button>
 
     <input onclick="createPdf()" type="button" value="Update">
 
     <script>
+        function main() {
+            window.location.replace(`http://140.238.215.73:8000/api/pdf/navigation`);
+        }
         function createPdf() {
             const contracts = document.getElementById('contractSelect');
             var date = document.getElementById("date").value
