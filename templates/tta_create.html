@@ -73,6 +73,9 @@
             window.location.replace(`http://140.238.215.73:8000/api/pdf/login`)
         }
     </script>
+    <button
+    style="margin-left: 0px; height: 40px; background-color: #1eb0df; cursor: pointer; color: white; border-radius: 5px; border: none;"
+    onclick="main()">Back to Main</button>
     <div class="form-container mt-5">
         <form class="d-flex justify-content-around">
             <div class="col-4">
@@ -146,14 +149,15 @@
             </tbody>
         </table>
 
-        <button class="mt-5 mb-5" style="background-color: #4CAF50;
-    color: white;
-    cursor: pointer; border-radius: 5px; border: 1px" onclick="addRow()" type="button">Add Row</button>
+        <button class="mt-5 mb-5" style="border-radius: 5px; border: none; color: white; background-color: #1eb0df;cursor: pointer; border-radius: 5px; border: 1px"; onclick="addRow()" type="button">Add Row</button>
     </section>
 
     <input onclick="createPdf()" type="button" value="Submit">
 
     <script>
+        function main() {
+            window.location.replace(`http://140.238.215.73:8000/api/pdf/navigation`);
+        }
         function createPdf() {
             const contracts = document.getElementById('contractSelect');
             var date = document.getElementById("date").value
