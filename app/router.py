@@ -379,7 +379,7 @@ async def preview(id: int, request: Request):
     wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
     await convert_to_pdf(
         rendered_html,
-        f"output{id}.pdf",
+        f"invoices/output{id}.pdf",
         options=options,
         config_path=wkhtmltopdf_path,
     )
@@ -709,7 +709,7 @@ async def prew_tta(c_id: int, request: Request):
     print(rendered_html)
     wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
 
-    await convert_to_pdf(rendered_html, f"tta{c_id}.pdf", wkhtmltopdf_path, options)
+    await convert_to_pdf(rendered_html, f"ttas/tta{c_id}.pdf", wkhtmltopdf_path, options)
     print(doc_data["descs"])
     # doc_file = f"tta_doc_{c_id}.docx"
     # await convert_pdf_to_doc(f"tta{c_id}.pdf", doc_file)
