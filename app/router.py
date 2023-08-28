@@ -377,9 +377,12 @@ async def preview(id: int, request: Request):
     html_template = Template(html_string)
     rendered_html = html_template.render(data=pdf_data)
     wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
+    path = os.getcwd()
+    if not os.path.exists(f"{path}/invoice_folder"):
+        os.mkdir("invoice_folder")
     await convert_to_pdf(
         rendered_html,
-        f"invoices/output{id}.pdf",
+        f"{path}/output{id}.pdf",
         options=options,
         config_path=wkhtmltopdf_path,
     )
@@ -708,8 +711,10 @@ async def prew_tta(c_id: int, request: Request):
     rendered_html = html_template.render(data=doc_data)
     print(rendered_html)
     wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
-
-    await convert_to_pdf(rendered_html, f"ttas/tta{c_id}.pdf", wkhtmltopdf_path, options)
+    path = os.getcwd()
+    if not os.path.exists(f"{path}/tta_folder"):
+        os.mkdir("data_folder")
+    await convert_to_pdf(rendered_html, f"{path}/tta{c_id}.pdf", wkhtmltopdf_path, options)
     print(doc_data["descs"])
     # doc_file = f"tta_doc_{c_id}.docx"
     # await convert_pdf_to_doc(f"tta{c_id}.pdf", doc_file)
