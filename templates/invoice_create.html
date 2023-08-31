@@ -113,13 +113,18 @@
                     {% endfor %}
                     <!-- Add more options dynamically based on available companies -->
                 </select>
-    
                 <label for="projectSelect">Select Project:</label>
                 <select id="projectSelect" name="projectSelect">
     
                     <!-- Add more options dynamically based on available projects -->
                 </select>
     
+                <label for="projectSelect">Contract Number:</label>
+                <input id="con_number" type="text">
+                <!-- <select id="projectSelect" name="projectSelect">
+    
+                </select>
+     -->
             </div>
             <div class="col-4">
                 <label for="startDate">Date:</label>
@@ -127,7 +132,19 @@
     
                 <label for="endDate">Due Date:</label>
                 <input type="date" id="endDate" name="endDate">
+                <label for="> currency">Currency:</label>
+                <select name="" id="currency">
+                    <option value="usd">usd</option>
+                    <option value="azn">azn</option>
+                </select>
+                <label for="> currency">Is Stamp:</label>
+                <select name="" id="stamp">
+                    <option value="yes">yes</option>
+                    <option value="no">no</option>
+                </select>
             </div>
+
+            
             
             <div class="col-4">
                 <label for="invoiceId">Invoice ID:</label>
@@ -274,13 +291,18 @@
 
         function createPdf() {
             const companies = document.getElementById('companySelect');
-            const projects_select = document.getElementById('projectSelect');
+            // const projects_select = document.getElementById('projectSelect');
             var date = document.getElementById("startDate").value
             var dueDate = document.getElementById("endDate").value
             const invoice = document.getElementById("invoiceId").value
             var comp_option = companies.options[companies.selectedIndex].value;
             var proj_option = projects_select.options[projects_select.selectedIndex].value;
             var descs = document.querySelectorAll(".desc")
+            var currSelect = document.getElementById("currency")
+            var stampSelect = document.getElementById("stamp")
+            var currOpt = currSelect.options[currSelect.selectedIndex].value
+            var stampOpt = stampSelect.options[stampSelect.selectedIndex].value
+            var conNumber = document.getElementById("con_number").value
 
             console.log(descs);
             var inpArr = []
@@ -297,7 +319,9 @@
             })
             var body = {
                 comp_id: comp_option,
+                curr: currOpt,
                 proj_id: proj_option,
+                contract: conNumber,
                 date: date,
                 due_date: dueDate,
                 invoice_id: invoice,

@@ -53,8 +53,10 @@ class CreateProjectInputSchema(BaseModel):
 
 class ConvertInvoiceInputSchema(BaseModel):
     comp_id: str
+    contract: str
     proj_id: str
     date: str
+    curr: str
     due_date: str
     invoice_id: str
     descriptions: List

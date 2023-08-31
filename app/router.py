@@ -204,6 +204,7 @@ def convert_pdf(
         "company_address": company["address"],
         "company_location": company["location"],
         "company_tax": company["tax_id"],
+        "currency": data.curr,
         "project_name": project["name"],
         "project_currency": project["currency"],
         "desciptions": data.descriptions,
@@ -220,6 +221,65 @@ def convert_pdf(
     )
 
     return {"id": pdf_data.id}
+
+@router.get("/preview/{id}")
+async def preview(id: int, request: Request):
+    pdf_data = list(PdfData.select().where(PdfData.id == id).dicts())[0]
+    company = list(Company.select().where(Company.id == pdf_data["comp_id"]).dicts())[0]
+    comp_id = pdf_data["comp_id"]
+    proje = list(Project.select().where(Project.id == pdf_data["proj_id"]).dicts())[0]
+    pdf_data = json.loads(pdf_data["data"])
+    pdf_data["date"] = pdf_data["date"].replace("-", "/")
+    pdf_data["due_date"] = pdf_data["due_date"].replace("-", "/")
+    currency_icon_2 = None
+    if proje["currency"] == "usd":
+        currency = "$"
+        currency_icon = "$"
+        currecny_icon_2 = "$"
+    else:
+        currency = "₼"
+        currency_icon_2 = '<img src="/app/static/az_curr.svg" width="20px" height="20px">'
+        currency_icon = '<img src="/app/static/Azeri_manat_symbol.svg" width="10px" height="10px">'
+    pdf_data["currency_2"] = currency
+    pdf_data["currency"] = currency
+    pdf_data["cur_icon"] = currency_icon
+    pdf_data["cur_icon2"] = currency_icon_2
+
+    pdf_data["tax_id"] = company["tax_id"]
+    final = 0
+    for i in pdf_data["desciptions"]:
+        final += int(i["qty"]) * int(i["unitprice"])
+    total = final
+    vat = final * 18 / 100
+    pdf_data["vat"] = vat
+    pdf_data["comp_id"] = comp_id
+    pdf_data["final_amount"] = round(final + vat, 2)
+    pdf_data["total"] = total
+
+    inv_id = pdf_data["invoice_id"]
+    options = {
+        "page-size": "Letter",
+        "margin-top": "40mm",
+        "zoom": "1.0",
+        "enable-local-file-access": True,
+    }
+    html_string = get_html_string()
+    html_template = Template(html_string)
+    rendered_html = html_template.render(data=pdf_data)
+    wkhtmltopdf_path = "/usr/local/bin/wkhtmltopdf"
+    path = os.getcwd()
+    if not os.path.exists(f"{path}/invoice_folder"):
+        os.mkdir("invoice_folder")
+    await convert_to_pdf(
+        rendered_html,
+        f"{path}/output{id}.pdf",
+        options=options,
+        config_path=wkhtmltopdf_path,
+    )
+
+    return templates.TemplateResponse(
+        "invoice.html", {"request": request, "data": pdf_data}
+    )
 
 
 @router.get("/update-invoice/{inv_id}")
@@ -374,8 +434,6 @@ def get_tta(tta_id: int, request: Request):
     )
 
 
-
-
 @router.put("/update-tta/{tta_id}")
 def put_tta(
     tta_id: int,
@@ -410,7 +468,7 @@ def put_tta(
 
 
 @router.get("/tta-preview-upd/{id}")
-async def preview(id: int, request: Request):
+async def preview_tta_upd(id: int, request: Request):
     contract_doc_data = list(TTAData.select().where(TTAData.id == id).dicts())[0]
     company = list(
         Company.select().where(Company.id == contract_doc_data["comp_id"]).dicts()
